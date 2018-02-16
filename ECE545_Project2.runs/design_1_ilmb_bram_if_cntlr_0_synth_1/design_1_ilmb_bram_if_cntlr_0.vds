@@ -1,0 +1,50 @@
+#-----------------------------------------------------------
+# Vivado v2017.3 (64-bit)
+# SW Build 2018833 on Wed Oct  4 19:58:22 MDT 2017
+# IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
+# Start of session at: Fri Feb 16 09:30:46 2018
+# Process ID: 7204
+# Current directory: C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.runs/design_1_ilmb_bram_if_cntlr_0_synth_1
+# Command line: vivado.exe -log design_1_ilmb_bram_if_cntlr_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_ilmb_bram_if_cntlr_0.tcl
+# Log file: C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.runs/design_1_ilmb_bram_if_cntlr_0_synth_1/design_1_ilmb_bram_if_cntlr_0.vds
+# Journal file: C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.runs/design_1_ilmb_bram_if_cntlr_0_synth_1\vivado.jou
+#-----------------------------------------------------------
+source design_1_ilmb_bram_if_cntlr_0.tcl -notrace
+Starting RTL Elaboration : Time (s): cpu = 00:00:14 ; elapsed = 00:00:17 . Memory (MB): peak = 414.020 ; gain = 99.703
+INFO: [Synth 8-638] synthesizing module 'design_1_ilmb_bram_if_cntlr_0' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ip/design_1_ilmb_bram_if_cntlr_0/synth/design_1_ilmb_bram_if_cntlr_0.vhd:84]
+INFO: [Synth 8-638] synthesizing module 'lmb_bram_if_cntlr' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/0739/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd:3106]
+INFO: [Synth 8-638] synthesizing module 'lmb_mux' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/0739/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd:2601]
+INFO: [Synth 8-638] synthesizing module 'pselect_mask' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/0739/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd:2121]
+INFO: [Synth 8-256] done synthesizing module 'pselect_mask' (1#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/0739/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd:2121]
+INFO: [Synth 8-256] done synthesizing module 'lmb_mux' (2#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/0739/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd:2601]
+INFO: [Synth 8-256] done synthesizing module 'lmb_bram_if_cntlr' (3#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/0739/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd:3106]
+INFO: [Synth 8-256] done synthesizing module 'design_1_ilmb_bram_if_cntlr_0' (4#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ip/design_1_ilmb_bram_if_cntlr_0/synth/design_1_ilmb_bram_if_cntlr_0.vhd:84]
+Finished RTL Elaboration : Time (s): cpu = 00:00:17 ; elapsed = 00:00:20 . Memory (MB): peak = 468.699 ; gain = 154.383
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:17 ; elapsed = 00:00:20 . Memory (MB): peak = 468.699 ; gain = 154.383
+INFO: [Device 21-403] Loading part xc7a100tcsg324-1
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.027 . Memory (MB): peak = 769.035 ; gain = 0.012
+Finished Constraint Validation : Time (s): cpu = 00:00:44 ; elapsed = 00:00:53 . Memory (MB): peak = 769.035 ; gain = 454.719
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:44 ; elapsed = 00:00:53 . Memory (MB): peak = 769.035 ; gain = 454.719
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:44 ; elapsed = 00:00:53 . Memory (MB): peak = 769.035 ; gain = 454.719
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:44 ; elapsed = 00:00:54 . Memory (MB): peak = 769.035 ; gain = 454.719
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:46 ; elapsed = 00:00:55 . Memory (MB): peak = 769.035 ; gain = 454.719
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:09 ; elapsed = 00:01:25 . Memory (MB): peak = 799.324 ; gain = 485.008
+Finished Timing Optimization : Time (s): cpu = 00:01:09 ; elapsed = 00:01:25 . Memory (MB): peak = 799.398 ; gain = 485.082
+Finished Technology Mapping : Time (s): cpu = 00:01:09 ; elapsed = 00:01:25 . Memory (MB): peak = 819.051 ; gain = 504.734
+Finished IO Insertion : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+Finished Renaming Generated Instances : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+Finished Renaming Generated Ports : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+Finished Handling Custom Attributes : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+Finished Renaming Generated Nets : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+
+Report Cell Usage: 
++------+-----+------+
+|      |Cell |Count |
++------+-----+------+
+|1     |LUT2 |     3|
+|2     |LUT3 |     4|
+|3     |FDRE |     2|
++------+-----+------+
+Finished Writing Synthesis Report : Time (s): cpu = 00:01:12 ; elapsed = 00:01:28 . Memory (MB): peak = 819.051 ; gain = 504.734
+synth_design: Time (s): cpu = 00:01:15 ; elapsed = 00:01:35 . Memory (MB): peak = 820.613 ; gain = 517.770
