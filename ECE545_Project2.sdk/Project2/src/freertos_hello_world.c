@@ -101,12 +101,23 @@
 /* Xilinx includes. */
 #include "xil_printf.h"
 #include "xparameters.h"
+#include "PmodOLEDrgb.h"
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
 #define DELAY_1_SECOND		1000UL
 #define TIMER_CHECK_THRESHOLD	9
 /*-----------------------------------------------------------*/
+//Application constants
+// Definitions for peripheral PMODOLEDRGB
+#define RGBDSPLY_DEVICE_ID		XPAR_PMODOLEDRGB_0_DEVICE_ID
+#define RGBDSPLY_GPIO_BASEADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_GPIO_BASEADDR
+#define RGBDSPLY_GPIO_HIGHADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_GPIO_HIGHADD
+#define RGBDSPLY_SPI_BASEADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_SPI_BASEADDR
+#define RGBDSPLY_SPI_HIGHADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_SPI_HIGHADDR
+
+
+
 
 /* The Tx and Rx tasks as described at the top of this file. */
 static void prvTxTask( void *pvParameters );
@@ -123,11 +134,29 @@ static TimerHandle_t xTimer = NULL;
 char HWstring[15] = "Hello World";
 long RxtaskCntr = 0;
 
+
+/*-----------------------------------------------------------*/
+//Application Variables
+PmodOLEDrgb	pmodOLEDrgb_inst;
+
+
+
+
 int main( void )
 {
 	const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
 
 	xil_printf( "Hello from Freertos example main\r\n" );
+
+	InitHardware();
+
+	//test OLEDrgb Display
+	OLEDrgb_Clear(&pmodOLEDrgb_inst);
+	OLEDrgb_SetFontColor(&pmodOLEDrgb_inst,OLEDrgb_BuildRGB(200, 12, 44));
+	OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 1);
+	OLEDrgb_PutString(&pmodOLEDrgb_inst,"Hello World!");
+
+	xil_printf( "Test Printf from main\r\n" );
 
 	/* Create the two tasks.  The Tx task is given a lower priority than the
 	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
@@ -248,5 +277,13 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 
 	vTaskDelete( xRxTask );
 	vTaskDelete( xTxTask );
+}
+
+
+int InitHardware(void)
+{
+	OLEDrgb_begin(&pmodOLEDrgb_inst, RGBDSPLY_GPIO_BASEADDR, RGBDSPLY_SPI_BASEADDR);
+
+	return 0;
 }
 
