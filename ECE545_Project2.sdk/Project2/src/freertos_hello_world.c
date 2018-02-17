@@ -102,13 +102,13 @@
 #include "xil_printf.h"
 #include "xparameters.h"
 #include "PmodOLEDrgb.h"
+#include "pmodENC.h"
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
 #define DELAY_1_SECOND		1000UL
 #define TIMER_CHECK_THRESHOLD	9
 /*-----------------------------------------------------------*/
-//Application constants
 // Definitions for peripheral PMODOLEDRGB
 #define RGBDSPLY_DEVICE_ID		XPAR_PMODOLEDRGB_0_DEVICE_ID
 #define RGBDSPLY_GPIO_BASEADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_GPIO_BASEADDR
@@ -116,7 +116,14 @@
 #define RGBDSPLY_SPI_BASEADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_SPI_BASEADDR
 #define RGBDSPLY_SPI_HIGHADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_SPI_HIGHADDR
 
+// Definitions for peripheral PMODENC
+#define PMODENC_DEVICE_ID		XPAR_PMODENC_0_DEVICE_ID
+#define PMODENC_BASEADDR		XPAR_PMODENC_0_S00_AXI_BASEADDR
+#define PMODENC_HIGHADDR		XPAR_PMODENC_0_S00_AXI_HIGHADDR
 
+//Application constants
+#define ROTARY_INC		1		//increment / decrement value per rotary click
+#define ROTARY_NO_NEG	false	//disallow negative enocoder values.
 
 
 /* The Tx and Rx tasks as described at the top of this file. */
@@ -138,6 +145,7 @@ long RxtaskCntr = 0;
 /*-----------------------------------------------------------*/
 //Application Variables
 PmodOLEDrgb	pmodOLEDrgb_inst;
+PmodENC 	pmodENC_inst;
 
 
 
@@ -241,6 +249,8 @@ char Recdstring[15] = "";
 
 	for( ;; )
 	{
+		uint16_t RotaryCnt;
+
 		/* Block to wait for data arriving on the queue. */
 		xQueueReceive( 	xQueue,				/* The queue being read. */
 						Recdstring,	/* Data is read into this address. */
@@ -248,6 +258,11 @@ char Recdstring[15] = "";
 
 		/* Print the received data. */
 		xil_printf( "Rx task received string from Tx task: %s\r\n", Recdstring );
+
+
+		pmodENC_read_count(&pmodENC_inst, &RotaryCnt);
+
+		xil_printf("Rotary Count is: %d\r\n",RotaryCnt);
 		RxtaskCntr++;
 	}
 }
@@ -282,7 +297,20 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 
 int InitHardware(void)
 {
+	uint32_t status;				// status from Xilinx Lib calls
+	
 	OLEDrgb_begin(&pmodOLEDrgb_inst, RGBDSPLY_GPIO_BASEADDR, RGBDSPLY_SPI_BASEADDR);
+
+	// initialize the pmodENC and hardware
+	status = pmodENC_initialize(&pmodENC_inst, PMODENC_BASEADDR);
+	if (status != XST_SUCCESS)
+	{
+		return XST_FAILURE;
+	}
+
+	//initialize rotary encoder
+	pmodENC_init(&pmodENC_inst, ROTARY_INC, ROTARY_NO_NEG);
+	pmodENC_clear_count(&pmodENC_inst);
 
 	return 0;
 }
