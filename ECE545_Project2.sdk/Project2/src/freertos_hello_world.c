@@ -103,7 +103,8 @@
 #include "xparameters.h"
 #include "PmodOLEDrgb.h"
 #include "pmodENC.h"
-#include <string.h>
+#include "xgpio.h"
+#include <stdio.h>
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
@@ -121,6 +122,11 @@
 #define PMODENC_DEVICE_ID		XPAR_PMODENC_0_DEVICE_ID
 #define PMODENC_BASEADDR		XPAR_PMODENC_0_S00_AXI_BASEADDR
 #define PMODENC_HIGHADDR		XPAR_PMODENC_0_S00_AXI_HIGHADDR
+
+//GPIO
+#define GPIO_0_DEVICE_ID			XPAR_AXI_GPIO_0_DEVICE_ID
+#define GPIO_0_INPUT_0_CHANNEL		2	//Slide Switches
+#define GPIO_0_OUTPUT_0_CHANNEL		1	//LEDs
 
 //Application constants
 #define ROTARY_INC		1		//increment / decrement value per rotary click
@@ -149,6 +155,7 @@ long RxtaskCntr = 0;
 //Application Variables
 PmodOLEDrgb	pmodOLEDrgb_inst;
 PmodENC 	pmodENC_inst;
+XGpio		GPIOInst0;
 
 
 
@@ -278,6 +285,8 @@ static void TestTask(void)
 	while(1)
 	{
 		uint16_t RotaryCnt;
+		uint32_t SlideSwitches;
+
 		char str[32];
 		//Read encoder
 		pmodENC_read_count(&pmodENC_inst, &RotaryCnt);
@@ -288,6 +297,13 @@ static void TestTask(void)
 
 		sprintf(&str[0],"%*d",6,RotaryCnt);
 		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
+
+
+		//Read Slide Switch GPIO value
+		SlideSwitches = XGpio_DiscreteRead(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL);
+
+		//Copy switch pattern to LEDs
+		XGpio_DiscreteWrite(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, SlideSwitches);
 
 		vTaskDelay(pdMS_TO_TICKS( 100 ));
 	}
@@ -337,6 +353,19 @@ int InitHardware(void)
 	//initialize rotary encoder
 	pmodENC_init(&pmodENC_inst, ROTARY_INC, ROTARY_NO_NEG);
 	pmodENC_clear_count(&pmodENC_inst);
+
+
+	// initialize the GPIO instances
+	status = XGpio_Initialize(&GPIOInst0, GPIO_0_DEVICE_ID);
+	if (status != XST_SUCCESS)
+	{
+		return XST_FAILURE;
+	}
+
+	// GPIO0 channel 1 is an 16-bit input port.
+	// GPIO0 channel 2 is an 16-bit output port.
+	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL, 0xFFFF);
+	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, 0x0000);
 
 	return 0;
 }
