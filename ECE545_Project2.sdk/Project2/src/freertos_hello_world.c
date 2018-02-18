@@ -103,6 +103,7 @@
 #include "xparameters.h"
 #include "PmodOLEDrgb.h"
 #include "pmodENC.h"
+#include <string.h>
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
@@ -129,6 +130,7 @@
 /* The Tx and Rx tasks as described at the top of this file. */
 static void prvTxTask( void *pvParameters );
 static void prvRxTask( void *pvParameters );
+static void TestTask(void);
 static void vTimerCallback( TimerHandle_t pxTimer );
 /*-----------------------------------------------------------*/
 
@@ -136,6 +138,7 @@ static void vTimerCallback( TimerHandle_t pxTimer );
 file. */
 static TaskHandle_t xTxTask;
 static TaskHandle_t xRxTask;
+static TaskHandle_t xTestTask;
 static QueueHandle_t xQueue = NULL;
 static TimerHandle_t xTimer = NULL;
 char HWstring[15] = "Hello World";
@@ -161,10 +164,8 @@ int main( void )
 	//test OLEDrgb Display
 	OLEDrgb_Clear(&pmodOLEDrgb_inst);
 	OLEDrgb_SetFontColor(&pmodOLEDrgb_inst,OLEDrgb_BuildRGB(200, 12, 44));
-	OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 1);
+	OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 0);
 	OLEDrgb_PutString(&pmodOLEDrgb_inst,"Hello World!");
-
-	xil_printf( "Test Printf from main\r\n" );
 
 	/* Create the two tasks.  The Tx task is given a lower priority than the
 	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
@@ -182,6 +183,14 @@ int main( void )
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
 				 &xRxTask );
+
+	xTaskCreate( TestTask,
+				 ( const char * ) "Test",
+				 1000,
+				 NULL,
+				 tskIDLE_PRIORITY + 1,
+				 &xTestTask );
+
 
 	/* Create the queue used by the tasks.  The Rx task has a higher priority
 	than the Tx task, so will preempt the Tx task and remove values from the
@@ -249,7 +258,7 @@ char Recdstring[15] = "";
 
 	for( ;; )
 	{
-		uint16_t RotaryCnt;
+		
 
 		/* Block to wait for data arriving on the queue. */
 		xQueueReceive( 	xQueue,				/* The queue being read. */
@@ -259,11 +268,28 @@ char Recdstring[15] = "";
 		/* Print the received data. */
 		xil_printf( "Rx task received string from Tx task: %s\r\n", Recdstring );
 
+		RxtaskCntr++;
+	}
+}
 
+//This task will test various hardware functions
+static void TestTask(void)
+{
+	while(1)
+	{
+		uint16_t RotaryCnt;
+		char str[32];
+		//Read encoder
 		pmodENC_read_count(&pmodENC_inst, &RotaryCnt);
 
-		xil_printf("Rotary Count is: %d\r\n",RotaryCnt);
-		RxtaskCntr++;
+		//Display encoder value on OLED display
+		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 1);
+		OLEDrgb_PutString(&pmodOLEDrgb_inst,"ENC: ");
+
+		sprintf(&str[0],"%*d",6,RotaryCnt);
+		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
+
+		vTaskDelay(pdMS_TO_TICKS( 100 ));
 	}
 }
 
@@ -298,7 +324,7 @@ static void vTimerCallback( TimerHandle_t pxTimer )
 int InitHardware(void)
 {
 	uint32_t status;				// status from Xilinx Lib calls
-	
+
 	OLEDrgb_begin(&pmodOLEDrgb_inst, RGBDSPLY_GPIO_BASEADDR, RGBDSPLY_SPI_BASEADDR);
 
 	// initialize the pmodENC and hardware
