@@ -105,6 +105,7 @@
 #include "pmodENC.h"
 #include "xgpio.h"
 #include <stdio.h>
+#include "pmodhb3.h"
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
@@ -198,7 +199,7 @@ int main( void )
 
 	xTaskCreate( TestTask,
 				 ( const char * ) "Test",
-				 1000,
+				 2000,
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
 				 &xTestTask );
@@ -287,11 +288,20 @@ char Recdstring[15] = "";
 //This task will test various hardware functions
 static void TestTask(void)
 {
+	//initialize PWM timer
+	//InitAXITimer();
+	taskENTER_CRITICAL();
+	InitAXITimer();
+	taskEXIT_CRITICAL();
+
+	//SetPWM(0.5);
+
 	while(1)
 	{
 		uint16_t RotaryCnt;
 		uint32_t SlideSwitches;
 		uint32_t HallSensorValue;
+		static int PWMDuty = 0;
 
 		char str[32];
 		//Read encoder
@@ -321,6 +331,16 @@ static void TestTask(void)
 		XGpio_DiscreteWrite(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, SlideSwitches);
 
 		vTaskDelay(pdMS_TO_TICKS( 100 ));
+
+		PWMDuty = (PWMDuty+1)%100;
+		SetPWM(((float)(PWMDuty++))/100);
+
+		//Display pwm value
+		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 3);
+		OLEDrgb_PutString(&pmodOLEDrgb_inst,"PWM: ");
+
+		sprintf(&str[0],"%*d",3,PWMDuty);
+		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
 	}
 }
 

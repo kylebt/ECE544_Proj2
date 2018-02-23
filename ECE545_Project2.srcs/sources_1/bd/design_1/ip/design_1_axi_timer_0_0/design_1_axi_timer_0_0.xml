@@ -1088,11 +1088,11 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Feb 16 17:19:23 UTC 2018</spirit:value>
+            <spirit:value>Mon Feb 19 00:52:55 UTC 2018</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>7:59eaa5e5</spirit:value>
+            <spirit:value>7:52a06d8c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1107,11 +1107,11 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Feb 16 17:19:23 UTC 2018</spirit:value>
+            <spirit:value>Mon Feb 19 00:52:55 UTC 2018</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>7:59eaa5e5</spirit:value>
+            <spirit:value>7:52a06d8c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1139,7 +1139,7 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>7:27f94670</spirit:value>
+            <spirit:value>7:3912760c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1154,11 +1154,11 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Feb 16 17:19:23 UTC 2018</spirit:value>
+            <spirit:value>Mon Feb 19 00:52:55 UTC 2018</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>7:27f94670</spirit:value>
+            <spirit:value>7:3912760c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1172,11 +1172,11 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Feb 16 17:25:29 UTC 2018</spirit:value>
+            <spirit:value>Mon Feb 19 00:55:12 UTC 2018</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>7:59eaa5e5</spirit:value>
+            <spirit:value>7:52a06d8c</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1574,7 +1574,7 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_ONE_TIMER_ONLY</spirit:name>
         <spirit:displayName>One Timer Only</spirit:displayName>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_ONE_TIMER_ONLY">1</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_ONE_TIMER_ONLY">0</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="std_logic">
         <spirit:name>C_TRIG0_ASSERT</spirit:name>
@@ -1835,7 +1835,7 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>
-            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.TRIG1_ASSERT">false</xilinx:isEnabled>
+            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.TRIG1_ASSERT">true</xilinx:isEnabled>
           </xilinx:enablement>
         </xilinx:parameterInfo>
       </spirit:vendorExtensions>
@@ -1861,7 +1861,7 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>
-            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.GEN1_ASSERT">false</xilinx:isEnabled>
+            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PARAM_ENABLEMENT.GEN1_ASSERT">true</xilinx:isEnabled>
           </xilinx:enablement>
         </xilinx:parameterInfo>
       </spirit:vendorExtensions>
@@ -1896,7 +1896,7 @@ Read:      0 - No interrupt has occurred      1 - Interrupt has occurred  Write:
       <spirit:name>enable_timer2</spirit:name>
       <spirit:displayName>Enable Timer 2</spirit:displayName>
       <spirit:description>This enables the second timer.</spirit:description>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.enable_timer2" spirit:choiceRef="choice_pairs_4873554b" spirit:order="1150">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.enable_timer2" spirit:choiceRef="choice_pairs_4873554b" spirit:order="1150">1</spirit:value>
       <spirit:vendorExtensions>
         <xilinx:parameterInfo>
           <xilinx:enablement>

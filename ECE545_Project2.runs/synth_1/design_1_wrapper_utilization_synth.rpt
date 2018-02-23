@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 ---------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2017.3 (win64) Build 2018833 Wed Oct  4 19:58:22 MDT 2017
-| Date         : Fri Feb 16 11:11:54 2018
+| Date         : Thu Feb 22 18:07:48 2018
 | Host         : DESKTOP-J8VJUT9 running 64-bit major release  (build 9200)
 | Command      : report_utilization -file design_1_wrapper_utilization_synth.rpt -pb design_1_wrapper_utilization_synth.pb
 | Design       : design_1_wrapper
@@ -180,6 +180,7 @@ Table of Contents
 | design_1_dlmb_bram_if_cntlr_0    |    1 |
 | design_1_clk_wiz_0_0             |    1 |
 | design_1_axi_uartlite_0_1        |    1 |
+| design_1_axi_timer_1_0           |    1 |
 | design_1_axi_timer_0_0           |    1 |
 | design_1_axi_timebase_wdt_0_0    |    1 |
 | design_1_axi_gpio_2_0            |    1 |
@@ -196,6 +197,7 @@ Table of Contents
 | design_1_auto_pc_4               |    1 |
 | design_1_auto_pc_3               |    1 |
 | design_1_auto_pc_2               |    1 |
+| design_1_auto_pc_12              |    1 |
 | design_1_auto_pc_11              |    1 |
 | design_1_auto_pc_10              |    1 |
 | design_1_auto_pc_1               |    1 |
@@ -208,6 +210,7 @@ Table of Contents
 | design_1_auto_ds_4               |    1 |
 | design_1_auto_ds_3               |    1 |
 | design_1_auto_ds_2               |    1 |
+| design_1_auto_ds_11              |    1 |
 | design_1_auto_ds_10              |    1 |
 | design_1_auto_ds_1               |    1 |
 | design_1_auto_ds_0               |    1 |

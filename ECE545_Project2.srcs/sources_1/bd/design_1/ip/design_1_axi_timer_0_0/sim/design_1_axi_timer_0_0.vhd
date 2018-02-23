@@ -162,7 +162,7 @@ BEGIN
     GENERIC MAP (
       C_FAMILY => "artix7",
       C_COUNT_WIDTH => 32,
-      C_ONE_TIMER_ONLY => 1,
+      C_ONE_TIMER_ONLY => 0,
       C_TRIG0_ASSERT => '1',
       C_TRIG1_ASSERT => '1',
       C_GEN0_ASSERT => '1',

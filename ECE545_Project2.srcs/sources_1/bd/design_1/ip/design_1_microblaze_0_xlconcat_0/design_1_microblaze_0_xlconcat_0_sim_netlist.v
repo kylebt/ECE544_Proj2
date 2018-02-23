@@ -1,10 +1,10 @@
 // Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2017.3 (win64) Build 2018833 Wed Oct  4 19:58:22 MDT 2017
-// Date        : Fri Feb 16 09:21:57 2018
+// Date        : Thu Feb 22 18:04:51 2018
 // Host        : DESKTOP-J8VJUT9 running 64-bit major release  (build 9200)
 // Command     : write_verilog -force -mode funcsim
-//               c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ip/design_1_microblaze_0_xlconcat_0/design_1_microblaze_0_xlconcat_0_sim_netlist.v
+//               C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ip/design_1_microblaze_0_xlconcat_0/design_1_microblaze_0_xlconcat_0_sim_netlist.v
 // Design      : design_1_microblaze_0_xlconcat_0
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -22,6 +22,7 @@ module design_1_microblaze_0_xlconcat_0
     In4,
     In5,
     In6,
+    In7,
     dout);
   input [0:0]In0;
   input [0:0]In1;
@@ -30,7 +31,8 @@ module design_1_microblaze_0_xlconcat_0
   input [0:0]In4;
   input [0:0]In5;
   input [0:0]In6;
-  output [6:0]dout;
+  input [0:0]In7;
+  output [7:0]dout;
 
   wire [0:0]In0;
   wire [0:0]In1;
@@ -39,7 +41,9 @@ module design_1_microblaze_0_xlconcat_0
   wire [0:0]In4;
   wire [0:0]In5;
   wire [0:0]In6;
+  wire [0:0]In7;
 
+  assign dout[7] = In7;
   assign dout[6] = In6;
   assign dout[5] = In5;
   assign dout[4] = In4;

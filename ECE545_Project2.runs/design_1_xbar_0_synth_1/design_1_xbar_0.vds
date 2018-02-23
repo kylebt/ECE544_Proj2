@@ -2,15 +2,16 @@
 # Vivado v2017.3 (64-bit)
 # SW Build 2018833 on Wed Oct  4 19:58:22 MDT 2017
 # IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
-# Start of session at: Fri Feb 16 09:27:18 2018
-# Process ID: 11756
+# Start of session at: Thu Feb 22 18:02:55 2018
+# Process ID: 12540
 # Current directory: C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.runs/design_1_xbar_0_synth_1
 # Command line: vivado.exe -log design_1_xbar_0.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source design_1_xbar_0.tcl
 # Log file: C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.runs/design_1_xbar_0_synth_1/design_1_xbar_0.vds
 # Journal file: C:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.runs/design_1_xbar_0_synth_1\vivado.jou
 #-----------------------------------------------------------
 source design_1_xbar_0.tcl -notrace
-Starting RTL Elaboration : Time (s): cpu = 00:00:20 ; elapsed = 00:00:23 . Memory (MB): peak = 429.531 ; gain = 108.035
+create_project: Time (s): cpu = 00:00:03 ; elapsed = 00:00:06 . Memory (MB): peak = 287.742 ; gain = 61.832
+Starting RTL Elaboration : Time (s): cpu = 00:00:22 ; elapsed = 00:00:25 . Memory (MB): peak = 431.156 ; gain = 108.063
 INFO: [Synth 8-638] synthesizing module 'design_1_xbar_0' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ip/design_1_xbar_0/synth/design_1_xbar_0.v:60]
 INFO: [Synth 8-638] synthesizing module 'axi_crossbar_v2_1_15_axi_crossbar' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/a1b8/hdl/axi_crossbar_v2_1_vl_rfs.v:4882]
 INFO: [Synth 8-638] synthesizing module 'axi_crossbar_v2_1_15_crossbar' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/a1b8/hdl/axi_crossbar_v2_1_vl_rfs.v:2239]
@@ -42,6 +43,8 @@ INFO: [Synth 8-638] synthesizing module 'generic_baseblocks_v2_1_0_comparator_st
 INFO: [Synth 8-256] done synthesizing module 'generic_baseblocks_v2_1_0_comparator_static__parameterized9' (2#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/b752/hdl/generic_baseblocks_v2_1_vl_rfs.v:2133]
 INFO: [Synth 8-638] synthesizing module 'generic_baseblocks_v2_1_0_comparator_static__parameterized10' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/b752/hdl/generic_baseblocks_v2_1_vl_rfs.v:2133]
 INFO: [Synth 8-256] done synthesizing module 'generic_baseblocks_v2_1_0_comparator_static__parameterized10' (2#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/b752/hdl/generic_baseblocks_v2_1_vl_rfs.v:2133]
+INFO: [Synth 8-638] synthesizing module 'generic_baseblocks_v2_1_0_comparator_static__parameterized11' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/b752/hdl/generic_baseblocks_v2_1_vl_rfs.v:2133]
+INFO: [Synth 8-256] done synthesizing module 'generic_baseblocks_v2_1_0_comparator_static__parameterized11' (2#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/b752/hdl/generic_baseblocks_v2_1_vl_rfs.v:2133]
 INFO: [Synth 8-256] done synthesizing module 'axi_crossbar_v2_1_15_addr_decoder' (3#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/a1b8/hdl/axi_crossbar_v2_1_vl_rfs.v:794]
 INFO: [Synth 8-638] synthesizing module 'axi_data_fifo_v2_1_13_axic_srl_fifo' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/74ae/hdl/axi_data_fifo_v2_1_vl_rfs.v:698]
 INFO: [Synth 8-638] synthesizing module 'axi_data_fifo_v2_1_13_ndeep_srl' [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/74ae/hdl/axi_data_fifo_v2_1_vl_rfs.v:1135]
@@ -139,40 +142,40 @@ INFO: [Synth 8-256] done synthesizing module 'axi_crossbar_v2_1_15_addr_arbiter'
 INFO: [Synth 8-256] done synthesizing module 'axi_crossbar_v2_1_15_crossbar' (22#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/a1b8/hdl/axi_crossbar_v2_1_vl_rfs.v:2239]
 INFO: [Synth 8-256] done synthesizing module 'axi_crossbar_v2_1_15_axi_crossbar' (23#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ipshared/a1b8/hdl/axi_crossbar_v2_1_vl_rfs.v:4882]
 INFO: [Synth 8-256] done synthesizing module 'design_1_xbar_0' (24#1) [c:/Users/wrayr/Documents/Xilinx_Projects/ECE544/ECE545_Project2/ECE545_Project2.srcs/sources_1/bd/design_1/ip/design_1_xbar_0/synth/design_1_xbar_0.v:60]
-Finished RTL Elaboration : Time (s): cpu = 00:00:39 ; elapsed = 00:00:44 . Memory (MB): peak = 611.301 ; gain = 289.805
-Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:40 ; elapsed = 00:00:45 . Memory (MB): peak = 611.301 ; gain = 289.805
+Finished RTL Elaboration : Time (s): cpu = 00:00:41 ; elapsed = 00:00:46 . Memory (MB): peak = 615.020 ; gain = 291.926
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:42 ; elapsed = 00:00:47 . Memory (MB): peak = 615.020 ; gain = 291.926
 INFO: [Device 21-403] Loading part xc7a100tcsg324-1
-Constraint Validation Runtime : Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.685 . Memory (MB): peak = 904.996 ; gain = 2.121
-Finished Constraint Validation : Time (s): cpu = 00:01:19 ; elapsed = 00:01:29 . Memory (MB): peak = 904.996 ; gain = 583.500
-Finished Loading Part and Timing Information : Time (s): cpu = 00:01:19 ; elapsed = 00:01:29 . Memory (MB): peak = 904.996 ; gain = 583.500
-Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:01:19 ; elapsed = 00:01:29 . Memory (MB): peak = 904.996 ; gain = 583.500
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:01:24 ; elapsed = 00:01:36 . Memory (MB): peak = 904.996 ; gain = 583.500
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:52 ; elapsed = 00:02:09 . Memory (MB): peak = 904.996 ; gain = 583.500
-Finished Applying XDC Timing Constraints : Time (s): cpu = 00:02:15 ; elapsed = 00:02:38 . Memory (MB): peak = 904.996 ; gain = 583.500
-Finished Timing Optimization : Time (s): cpu = 00:02:24 ; elapsed = 00:02:48 . Memory (MB): peak = 950.414 ; gain = 628.918
-Finished Technology Mapping : Time (s): cpu = 00:02:32 ; elapsed = 00:02:57 . Memory (MB): peak = 981.988 ; gain = 660.492
-Finished IO Insertion : Time (s): cpu = 00:02:35 ; elapsed = 00:03:01 . Memory (MB): peak = 981.988 ; gain = 660.492
-Finished Renaming Generated Instances : Time (s): cpu = 00:02:35 ; elapsed = 00:03:01 . Memory (MB): peak = 981.988 ; gain = 660.492
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:37 ; elapsed = 00:03:03 . Memory (MB): peak = 981.988 ; gain = 660.492
-Finished Renaming Generated Ports : Time (s): cpu = 00:02:37 ; elapsed = 00:03:04 . Memory (MB): peak = 981.988 ; gain = 660.492
-Finished Handling Custom Attributes : Time (s): cpu = 00:02:38 ; elapsed = 00:03:04 . Memory (MB): peak = 981.988 ; gain = 660.492
-Finished Renaming Generated Nets : Time (s): cpu = 00:02:38 ; elapsed = 00:03:05 . Memory (MB): peak = 981.988 ; gain = 660.492
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.815 . Memory (MB): peak = 910.457 ; gain = 2.582
+Finished Constraint Validation : Time (s): cpu = 00:01:21 ; elapsed = 00:01:29 . Memory (MB): peak = 910.457 ; gain = 587.363
+Finished Loading Part and Timing Information : Time (s): cpu = 00:01:21 ; elapsed = 00:01:29 . Memory (MB): peak = 910.457 ; gain = 587.363
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:01:21 ; elapsed = 00:01:29 . Memory (MB): peak = 910.457 ; gain = 587.363
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:01:25 ; elapsed = 00:01:33 . Memory (MB): peak = 910.457 ; gain = 587.363
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:45 ; elapsed = 00:01:55 . Memory (MB): peak = 910.457 ; gain = 587.363
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:58 ; elapsed = 00:02:07 . Memory (MB): peak = 910.457 ; gain = 587.363
+Finished Timing Optimization : Time (s): cpu = 00:02:03 ; elapsed = 00:02:13 . Memory (MB): peak = 956.234 ; gain = 633.141
+Finished Technology Mapping : Time (s): cpu = 00:02:08 ; elapsed = 00:02:18 . Memory (MB): peak = 988.941 ; gain = 665.848
+Finished IO Insertion : Time (s): cpu = 00:02:10 ; elapsed = 00:02:20 . Memory (MB): peak = 988.941 ; gain = 665.848
+Finished Renaming Generated Instances : Time (s): cpu = 00:02:10 ; elapsed = 00:02:20 . Memory (MB): peak = 988.941 ; gain = 665.848
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:02:11 ; elapsed = 00:02:21 . Memory (MB): peak = 988.941 ; gain = 665.848
+Finished Renaming Generated Ports : Time (s): cpu = 00:02:11 ; elapsed = 00:02:21 . Memory (MB): peak = 988.941 ; gain = 665.848
+Finished Handling Custom Attributes : Time (s): cpu = 00:02:12 ; elapsed = 00:02:21 . Memory (MB): peak = 988.941 ; gain = 665.848
+Finished Renaming Generated Nets : Time (s): cpu = 00:02:12 ; elapsed = 00:02:21 . Memory (MB): peak = 988.941 ; gain = 665.848
 
 Report Cell Usage: 
 +------+--------+------+
 |      |Cell    |Count |
 +------+--------+------+
-|1     |LUT1    |    44|
-|2     |LUT2    |    84|
-|3     |LUT3    |  1252|
-|4     |LUT4    |  1048|
-|5     |LUT5    |   259|
-|6     |LUT6    |   912|
-|7     |MUXF7   |   414|
+|1     |LUT1    |    47|
+|2     |LUT2    |   312|
+|3     |LUT3    |  1119|
+|4     |LUT4    |  1142|
+|5     |LUT5    |   273|
+|6     |LUT6    |  1192|
+|7     |MUXF7   |   416|
 |8     |MUXF8   |   207|
-|9     |SRLC32E |    36|
-|10    |FDRE    |  2243|
-|11    |FDSE    |    84|
+|9     |SRLC32E |    38|
+|10    |FDRE    |  2416|
+|11    |FDSE    |    90|
 +------+--------+------+
-Finished Writing Synthesis Report : Time (s): cpu = 00:02:38 ; elapsed = 00:03:05 . Memory (MB): peak = 981.988 ; gain = 660.492
-synth_design: Time (s): cpu = 00:02:48 ; elapsed = 00:03:18 . Memory (MB): peak = 981.988 ; gain = 667.355
+Finished Writing Synthesis Report : Time (s): cpu = 00:02:12 ; elapsed = 00:02:21 . Memory (MB): peak = 988.941 ; gain = 665.848
+synth_design: Time (s): cpu = 00:02:18 ; elapsed = 00:02:30 . Memory (MB): peak = 988.941 ; gain = 672.707

@@ -94,6 +94,15 @@ set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_pmod_b
 # IP: bd/design_1/ip/design_1_xlconstant_2_0/design_1_xlconstant_2_0.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_xlconstant_2_0 || ORIG_REF_NAME==design_1_xlconstant_2_0} -quiet] -quiet
 
+# IP: bd/design_1/ip/design_1_axi_timer_1_0/design_1_axi_timer_1_0.xci
+set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_axi_timer_1_0 || ORIG_REF_NAME==design_1_axi_timer_1_0} -quiet] -quiet
+
+# IP: bd/design_1/ip/design_1_auto_ds_11/design_1_auto_ds_11.xci
+set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_ds_11 || ORIG_REF_NAME==design_1_auto_ds_11} -quiet] -quiet
+
+# IP: bd/design_1/ip/design_1_auto_pc_11/design_1_auto_pc_11.xci
+set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_pc_11 || ORIG_REF_NAME==design_1_auto_pc_11} -quiet] -quiet
+
 # IP: bd/design_1/ip/design_1_auto_ds_10/design_1_auto_ds_10.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_ds_10 || ORIG_REF_NAME==design_1_auto_ds_10} -quiet] -quiet
 
@@ -169,8 +178,8 @@ set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_u
 # IP: bd/design_1/ip/design_1_auto_us_1/design_1_auto_us_1.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_us_1 || ORIG_REF_NAME==design_1_auto_us_1} -quiet] -quiet
 
-# IP: bd/design_1/ip/design_1_auto_pc_11/design_1_auto_pc_11.xci
-set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_pc_11 || ORIG_REF_NAME==design_1_auto_pc_11} -quiet] -quiet
+# IP: bd/design_1/ip/design_1_auto_pc_12/design_1_auto_pc_12.xci
+set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_pc_12 || ORIG_REF_NAME==design_1_auto_pc_12} -quiet] -quiet
 
 # IP: bd/design_1/ip/design_1_auto_us_0/design_1_auto_us_0.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_us_0 || ORIG_REF_NAME==design_1_auto_us_0} -quiet] -quiet
