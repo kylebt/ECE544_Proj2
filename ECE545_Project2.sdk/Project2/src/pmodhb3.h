@@ -43,7 +43,7 @@ void SetPWM(float dutyCycle);
 **		Reads the computed RPM value based on the frequency of 
 ** 		Hall Sensor updates
 */
-uint32_t GetRPM(void);
+float GetRPM(void);
 
 /* ------------------------------------------------------------ */
 /***	void Hall_Handler(void)

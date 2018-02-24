@@ -296,7 +296,7 @@ static void TestTask(void)
 	{
 		uint16_t RotaryCnt;
 		uint32_t SlideSwitches;
-		uint32_t RPM;
+		float RPM;
 		static int PWMDuty = 0;
 
 		char str[32];
@@ -317,7 +317,7 @@ static void TestTask(void)
 		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 2);
 		OLEDrgb_PutString(&pmodOLEDrgb_inst,"RPM: ");
 
-		sprintf(&str[0],"%*d",3,RPM);
+		sprintf(&str[0],"%*f",4,RPM);
 		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
 
 		//Read Slide Switch GPIO value

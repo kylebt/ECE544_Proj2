@@ -34,11 +34,11 @@
 #define HALL_INTERRUPT_ID			XPAR_MICROBLAZE_0_AXI_INTC_AXI_GPIO_2_IP2INTC_IRPT_INTR
 #define HALL_SENSOR_MASK			0x01
 
-#define HALL_SAMPLE_AVERAGE_SIZE	10	//number of samples to average for RPM computation
+#define HALL_SAMPLE_AVERAGE_SIZE	50	//number of samples to average for RPM computation
 
 /************************* File Scope Variables ****************************/
 static XGpio GPIOInst2;
-static uint32_t RPM;
+static float RPM;
 extern XIntc IntrptCtlrInst;				// Interrupt Controller instance
 
 /*************************** Private Functions *****************************/
@@ -149,9 +149,9 @@ void SetPWM(float dutyCycle)
 	//XTmrCtr_SetControlStatusReg(AXI_TIMER_BASEADDR, 1, ctlsts);
 }
 
-uint32_t GetRPM(void)
+float GetRPM(void)
 {
-	uint32_t RPMVal;
+	float RPMVal;
 	//critical section to prevent interrupt from modifying value while it's read
 	taskENTER_CRITICAL();
 	RPMVal = RPM;
@@ -188,7 +188,7 @@ void Hall_Handler(void)
 		DeltaT = (History[SampleNum] - History[(SampleNum + 1) % HALL_SAMPLE_AVERAGE_SIZE])*portTICK_PERIOD_MS;
 
 		//compute the RPM value
-		RPM = (1000*60)/(DeltaT);
+		RPM = (1000*60*HALL_SAMPLE_AVERAGE_SIZE)/((float)DeltaT);
 
 		//update sample pointer
 		SampleNum = (SampleNum + 1) % HALL_SAMPLE_AVERAGE_SIZE;
