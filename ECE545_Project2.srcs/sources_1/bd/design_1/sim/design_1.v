@@ -1,7 +1,7 @@
 //Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2017.3 (win64) Build 2018833 Wed Oct  4 19:58:22 MDT 2017
-//Date        : Thu Feb 22 18:01:25 2018
+//Date        : Sat Feb 24 10:16:35 2018
 //Host        : DESKTOP-J8VJUT9 running 64-bit major release  (build 9200)
 //Command     : generate_target design_1.bd
 //Design      : design_1
@@ -234,6 +234,7 @@ module design_1
   wire [4:0]axi_gpio_1_GPIO_TRI_I;
   wire axi_gpio_1_ip2intc_irpt;
   wire [0:0]axi_gpio_2_gpio2_io_o;
+  wire axi_gpio_2_ip2intc_irpt;
   wire axi_timebase_wdt_0_timebase_interrupt;
   wire axi_timebase_wdt_0_wdt_interrupt;
   wire axi_timebase_wdt_0_wdt_reset;
@@ -577,7 +578,7 @@ module design_1
   wire [0:1]microblaze_0_interrupt_ACK;
   wire [31:0]microblaze_0_interrupt_ADDRESS;
   wire microblaze_0_interrupt_INTERRUPT;
-  wire [7:0]microblaze_0_intr;
+  wire [8:0]microblaze_0_intr;
   wire [31:0]microblaze_0_mdm_axi_ARADDR;
   wire microblaze_0_mdm_axi_ARREADY;
   wire microblaze_0_mdm_axi_ARVALID;
@@ -914,6 +915,7 @@ module design_1
   design_1_axi_gpio_2_0 axi_gpio_2
        (.gpio2_io_o(axi_gpio_2_gpio2_io_o),
         .gpio_io_i(xlconcat_0_dout),
+        .ip2intc_irpt(axi_gpio_2_ip2intc_irpt),
         .s_axi_aclk(microblaze_0_Clk),
         .s_axi_araddr(microblaze_0_axi_periph_M11_AXI_ARADDR[8:0]),
         .s_axi_aresetn(rst_clk_wiz_0_100M_peripheral_aresetn),
@@ -1586,6 +1588,7 @@ module design_1
         .In5(axi_timebase_wdt_0_wdt_interrupt),
         .In6(axi_uartlite_0_interrupt),
         .In7(axi_timer_1_interrupt),
+        .In8(axi_gpio_2_ip2intc_irpt),
         .dout(microblaze_0_intr));
   design_1_mig_7series_0_0 mig_7series_0
        (.aresetn(rst_mig_7series_0_81M_peripheral_aresetn),

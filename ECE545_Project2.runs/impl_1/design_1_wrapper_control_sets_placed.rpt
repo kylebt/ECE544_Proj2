@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 ------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2017.3 (win64) Build 2018833 Wed Oct  4 19:58:22 MDT 2017
-| Date         : Thu Feb 22 18:14:01 2018
+| Date         : Sat Feb 24 10:27:55 2018
 | Host         : DESKTOP-J8VJUT9 running 64-bit major release  (build 9200)
 | Command      : report_control_sets -file design_1_wrapper_control_sets_placed.rpt
 | Design       : design_1_wrapper
@@ -21,7 +21,7 @@ Table of Contents
 +-------------------------------+-------+
 |             Status            | Count |
 +-------------------------------+-------+
-| Number of unique control sets |  1270 |
+| Number of unique control sets |  1272 |
 +-------------------------------+-------+
 
 
@@ -31,12 +31,12 @@ Table of Contents
 +--------------+-----------------------+------------------------+-----------------+--------------+
 | Clock Enable | Synchronous Set/Reset | Asynchronous Set/Reset | Total Registers | Total Slices |
 +--------------+-----------------------+------------------------+-----------------+--------------+
-| No           | No                    | No                     |            3612 |         1120 |
-| No           | No                    | Yes                    |             777 |          243 |
-| No           | Yes                   | No                     |            2892 |         1159 |
-| Yes          | No                    | No                     |            8275 |         2073 |
-| Yes          | No                    | Yes                    |             923 |          206 |
-| Yes          | Yes                   | No                     |            5670 |         1960 |
+| No           | No                    | No                     |            3620 |         1161 |
+| No           | No                    | Yes                    |             777 |          247 |
+| No           | Yes                   | No                     |            2917 |         1174 |
+| Yes          | No                    | No                     |            8275 |         2150 |
+| Yes          | No                    | Yes                    |             923 |          202 |
+| Yes          | Yes                   | No                     |            5695 |         1970 |
 +--------------+-----------------------+------------------------+-----------------+--------------+
 
 

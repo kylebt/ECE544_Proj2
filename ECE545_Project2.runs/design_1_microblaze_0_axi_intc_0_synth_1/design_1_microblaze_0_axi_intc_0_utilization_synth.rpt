@@ -1,7 +1,7 @@
 Copyright 1986-2017 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 | Tool Version : Vivado v.2017.3 (win64) Build 2018833 Wed Oct  4 19:58:22 MDT 2017
-| Date         : Thu Feb 22 18:05:00 2018
+| Date         : Sat Feb 24 10:19:40 2018
 | Host         : DESKTOP-J8VJUT9 running 64-bit major release  (build 9200)
 | Command      : report_utilization -file design_1_microblaze_0_axi_intc_0_utilization_synth.rpt -pb design_1_microblaze_0_axi_intc_0_utilization_synth.pb
 | Design       : design_1_microblaze_0_axi_intc_0
@@ -30,13 +30,13 @@ Table of Contents
 +----------------------------+------+-------+-----------+-------+
 |          Site Type         | Used | Fixed | Available | Util% |
 +----------------------------+------+-------+-----------+-------+
-| Slice LUTs*                |  247 |     0 |     63400 |  0.39 |
-|   LUT as Logic             |  183 |     0 |     63400 |  0.29 |
+| Slice LUTs*                |  259 |     0 |     63400 |  0.41 |
+|   LUT as Logic             |  195 |     0 |     63400 |  0.31 |
 |   LUT as Memory            |   64 |     0 |     19000 |  0.34 |
 |     LUT as Distributed RAM |   64 |     0 |           |       |
 |     LUT as Shift Register  |    0 |     0 |           |       |
-| Slice Registers            |  228 |     0 |    126800 |  0.18 |
-|   Register as Flip Flop    |  228 |     0 |    126800 |  0.18 |
+| Slice Registers            |  236 |     0 |    126800 |  0.19 |
+|   Register as Flip Flop    |  236 |     0 |    126800 |  0.19 |
 |   Register as Latch        |    0 |     0 |    126800 |  0.00 |
 | F7 Muxes                   |    0 |     0 |     31700 |  0.00 |
 | F8 Muxes                   |    0 |     0 |     15850 |  0.00 |
@@ -58,8 +58,8 @@ Table of Contents
 | 0     |          Yes |           - |            - |
 | 0     |          Yes |           - |          Set |
 | 0     |          Yes |           - |        Reset |
-| 1     |          Yes |         Set |            - |
-| 227   |          Yes |       Reset |            - |
+| 3     |          Yes |         Set |            - |
+| 233   |          Yes |       Reset |            - |
 +-------+--------------+-------------+--------------+
 
 
@@ -148,15 +148,15 @@ Table of Contents
 +----------+------+---------------------+
 | Ref Name | Used | Functional Category |
 +----------+------+---------------------+
-| FDRE     |  227 |        Flop & Latch |
+| FDRE     |  233 |        Flop & Latch |
+| LUT6     |   66 |                 LUT |
 | RAMD32   |   64 |  Distributed Memory |
-| LUT6     |   62 |                 LUT |
-| LUT5     |   53 |                 LUT |
-| LUT3     |   48 |                 LUT |
-| LUT4     |   33 |                 LUT |
-| LUT2     |   30 |                 LUT |
+| LUT5     |   59 |                 LUT |
+| LUT4     |   57 |                 LUT |
+| LUT2     |   34 |                 LUT |
+| LUT3     |   26 |                 LUT |
+| FDSE     |    3 |        Flop & Latch |
 | LUT1     |    2 |                 LUT |
-| FDSE     |    1 |        Flop & Latch |
 +----------+------+---------------------+
 
 

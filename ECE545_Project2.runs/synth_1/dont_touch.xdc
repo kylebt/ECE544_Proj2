@@ -127,7 +127,7 @@ set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_d
 # IP: bd/design_1/ip/design_1_auto_pc_7/design_1_auto_pc_7.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_pc_7 || ORIG_REF_NAME==design_1_auto_pc_7} -quiet] -quiet
 
-# IP: bd/design_1/ip/design_1_auto_ds_6/design_1_auto_ds_6.xci
+# IP: bd/design_1/ip/design_1_auto_ds_6_1/design_1_auto_ds_6.xci
 set_property DONT_TOUCH TRUE [get_cells -hier -filter {REF_NAME==design_1_auto_ds_6 || ORIG_REF_NAME==design_1_auto_ds_6} -quiet] -quiet
 
 # IP: bd/design_1/ip/design_1_auto_pc_6/design_1_auto_pc_6.xci

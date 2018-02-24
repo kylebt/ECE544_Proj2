@@ -106,6 +106,7 @@
 #include "xgpio.h"
 #include <stdio.h>
 #include "pmodhb3.h"
+#include "xintc.h"
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
@@ -129,9 +130,8 @@
 #define GPIO_0_INPUT_0_CHANNEL		2	//Slide Switches
 #define GPIO_0_OUTPUT_0_CHANNEL		1	//LEDs
 
-#define GPIO_2_DEVICE_ID			XPAR_AXI_GPIO_2_DEVICE_ID
-#define GPIO_2_INPUT_0_CHANNEL		1	//Slide Switches
-#define GPIO_2_OUTPUT_0_CHANNEL		2	//LEDs
+// Interrupt Controller parameters
+#define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
 
 //Application constants
 #define ROTARY_INC		1		//increment / decrement value per rotary click
@@ -161,8 +161,7 @@ long RxtaskCntr = 0;
 PmodOLEDrgb	pmodOLEDrgb_inst;
 PmodENC 	pmodENC_inst;
 XGpio		GPIOInst0;
-XGpio		GPIOInst2;
-
+XIntc 		IntrptCtlrInst;				// Interrupt Controller instance
 
 
 
@@ -290,17 +289,14 @@ static void TestTask(void)
 {
 	//initialize PWM timer
 	//InitAXITimer();
-	taskENTER_CRITICAL();
 	InitAXITimer();
-	taskEXIT_CRITICAL();
 
-	//SetPWM(0.5);
 
 	while(1)
 	{
 		uint16_t RotaryCnt;
 		uint32_t SlideSwitches;
-		uint32_t HallSensorValue;
+		uint32_t RPM;
 		static int PWMDuty = 0;
 
 		char str[32];
@@ -314,14 +310,14 @@ static void TestTask(void)
 		sprintf(&str[0],"%*d",6,RotaryCnt);
 		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
 
-		//Read Hall sensor value
-		HallSensorValue = XGpio_DiscreteRead(&GPIOInst2, GPIO_2_INPUT_0_CHANNEL);
+		//Read RPM
+		RPM = GetRPM();
 
 		//Display Hall sensor value
 		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 2);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,"Hall: ");
+		OLEDrgb_PutString(&pmodOLEDrgb_inst,"RPM: ");
 
-		sprintf(&str[0],"%d",HallSensorValue);
+		sprintf(&str[0],"%*d",3,RPM);
 		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
 
 		//Read Slide Switch GPIO value
@@ -397,23 +393,25 @@ int InitHardware(void)
 		return XST_FAILURE;
 	}
 
-	// initialize the GPIO instances
-	status = XGpio_Initialize(&GPIOInst2, GPIO_2_DEVICE_ID);
-	if (status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-
 	// GPIO0 channel 1 is a 16-bit input port.
 	// GPIO0 channel 2 is an 16-bit output port.
 	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL, 0xFFFF);
 	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, 0x0000);
 
-	// GPIO2 channel 1 is an 2-bit input port.
-	// GPIO2 channel 2 is an 1-bit output port.
-	XGpio_SetDataDirection(&GPIOInst2, GPIO_2_INPUT_0_CHANNEL, 0x0003);
-	XGpio_SetDataDirection(&GPIOInst2, GPIO_2_OUTPUT_0_CHANNEL, 0x0000);
+	// initialize the interrupt controller
+	status = XIntc_Initialize(&IntrptCtlrInst, INTC_DEVICE_ID);
+	if (status != XST_SUCCESS)
+	{
+	   return XST_FAILURE;
+	}
+
+	// start the interrupt controller such that interrupts are enabled for
+	// all devices that cause interrupts.
+	status = XIntc_Start(&IntrptCtlrInst, XIN_REAL_MODE);
+	if (status != XST_SUCCESS)
+	{
+		return XST_FAILURE;
+	}
 
 	return 0;
 }
