@@ -39,6 +39,6 @@ uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection);
 /**
  * @brief Takes the actual rpm, expected rpm, and PID constants, and determines the RPM set point based on the PID algorithm.
  */
-uint32_t PIDAlgorithm(STATE_PARAMS* params);
+RPM_TYPE PIDAlgorithm(STATE_PARAMS* params);
 
 #endif /* SRC_PROJECT2HELPERS_H_ */

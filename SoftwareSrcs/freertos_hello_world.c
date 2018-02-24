@@ -114,27 +114,21 @@
 
 
 /* The Tx and Rx tasks as described at the top of this file. */
-//static void prvTxTask( void *pvParameters );
-//static void prvRxTask( void *pvParameters );
-static void TestTask(void);
+static void InputTask(void *params );
+static void PidTask(void *param );
+static void DisplayTask(void *params);
 //static void vTimerCallback( TimerHandle_t pxTimer );
 /*-----------------------------------------------------------*/
 
 /* The queue used by the Tx and Rx tasks, as described at the top of this
 file. */
-//static TaskHandle_t xTxTask;
-//static TaskHandle_t xRxTask;
-static TaskHandle_t xTestTask;
-//static QueueHandle_t xQueue = NULL;
+static TaskHandle_t xInputTask;
+static TaskHandle_t xPidTask;
+static TaskHandle_t xDisplayTask;
+static QueueHandle_t xInputToPidQueue = NULL;
+static QueueHandle_t xPidToDisplayQueue = NULL;
 //static TimerHandle_t xTimer = NULL;
-char HWstring[15] = "Hello World";
 long RxtaskCntr = 0;
-
-
-/*-----------------------------------------------------------*/
-
-
-
 
 
 int main( void )
@@ -145,63 +139,42 @@ int main( void )
 
 	InitHardware();
 
-
-	/*
 	// Create the two tasks.  The Tx task is given a lower priority than the
 	// Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
 	// task as soon as the Tx task places an item in the queue.
-	xTaskCreate( 	prvTxTask, 					// The function that implements the task.
-					( const char * ) "Tx", 		// Text name for the task, provided to assist debugging only.
-					configMINIMAL_STACK_SIZE, 	// The stack allocated to the task.
+	xTaskCreate(InputTask, 					// The function that implements the task.
+					NULL, 						// Unused
+					1000, 					// The stack allocated to the task.
 					NULL, 						// The task parameter is not used, so set to NULL.
 					tskIDLE_PRIORITY,			// The task runs at the idle priority.
-					&xTxTask );
+					&xInputTask);
 
-	xTaskCreate( prvRxTask,
-				 ( const char * ) "GB",
-				 configMINIMAL_STACK_SIZE,
+	xTaskCreate(PidTask,
 				 NULL,
-				 tskIDLE_PRIORITY + 1,
-				 &xRxTask );
-	*/
-	xTaskCreate( TestTask,
-				 ( const char * ) "Test",
 				 1000,
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
-				 &xTestTask );
+				 &xPidTask);
+
+	xTaskCreate(DisplayTask,
+				 NULL,
+				 1000,
+				 NULL,
+				 tskIDLE_PRIORITY,
+				 &xDisplayTask);
 
 
-	/* Create the queue used by the tasks.  The Rx task has a higher priority
-	than the Tx task, so will preempt the Tx task and remove values from the
-	queue as soon as the Tx task writes to the queue - therefore the queue can
+	/* Create the queues used by the tasks.  The Display task has a higher priority
+	than the PID task which is higher than the input task, so will each preempt the
+	appropriate task before it has a chance to write twice - therefore the queue can
 	never have more than one item in it. */
-	//xQueue = xQueueCreate( 	1,						/* There is only one space in the queue. */
-	//						sizeof( HWstring ) );	/* Each space in the queue is large enough to hold a uint32_t. */
+	xInputToPidQueue = xQueueCreate(1, sizeof(STATE_PARAMS));	/* Each space in the queue is large enough to hold a STATE_PARAMS structure. */
 
-	/* Check the queue was created. */
-	//configASSERT( xQueue );
+	configASSERT(xInputToPidQueue);
 
-	/* Create a timer with a timer expiry of 10 seconds. The timer would expire
-	 after 10 seconds and the timer call back would get called. In the timer call back
-	 checks are done to ensure that the tasks have been running properly till then.
-	 The tasks are deleted in the timer call back and a message is printed to convey that
-	 the example has run successfully.
-	 The timer expiry is set to 10 seconds and the timer set to not auto reload. */
-	/*
-	 xTimer = xTimerCreate( (const char *) "Timer",
-							x10seconds,
-							pdFALSE,
-							(void *) TIMER_ID,
-							vTimerCallback);
-	*/
-	/* Check the timer was created. */
-	//configASSERT( xTimer );
+	xPidToDisplayQueue = xQueueCreate(1, sizeof(STATE_PARAMS));	/* Each space in the queue is large enough to hold a STATE_PARAMS structure. */
 
-	/* start the timer with a block time of 0 ticks. This means as soon
-	   as the schedule starts the timer will start running and will expire after
-	   10 seconds */
-	//xTimerStart( xTimer, 0 );
+	configASSERT(xPidToDisplayQueue);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -214,29 +187,73 @@ int main( void )
 	for( ;; );
 }
 
-//This task will test various hardware functions
-static void TestTask(void)
+static void InputTask(void *params )
 {
-	STATE_PARAMS state;
-	state.actualRpm = 0;
-	bool forceStateReset = TRUE;
-	while(1)
-	{
-		int16_t rotaryCount;
-		uint16_t slideSwitches;
-		BUTTON_STATE buttons;
-		uint16_t leds;
-		bool clearRotaryCountAfterRead = TRUE;
+	int16_t rotaryCount;
+	uint16_t slideSwitches;
+	BUTTON_STATE buttons;
 
+	STATE_PARAMS state;
+
+	bool clearRotaryCountAfterRead = TRUE;
+	bool forceStateReset = TRUE; //Flag to initialize state
+
+	BaseType_t queueStatus;
+
+	while(TRUE)
+	{
 		rotaryCount = GetRotaryCount(clearRotaryCountAfterRead);
 		slideSwitches = GetSwitches();
 		buttons = GetPushButtons();
 		ModifyState(slideSwitches, buttons, rotaryCount, &state, forceStateReset);
-		leds = FormatLEDOutput(state.select);
-		SetLEDs(leds);
 		forceStateReset = FALSE;
-		OLEDSetDisplay(GetOLEDDisplayHandle(), &state);
-		vTaskDelay(pdMS_TO_TICKS( 100 ));
+		queueStatus = xQueueOverwrite(xInputToPidQueue, &state);
+		configASSERT(queueStatus == pdTRUE);
+		vTaskDelay(pdMS_TO_TICKS(150));
+	}
+}
+
+static void PidTask(void *params)
+{
+	bool initialized = FALSE;
+	STATE_PARAMS state;
+	BaseType_t queueStatus;
+	while(TRUE)
+	{
+		//Read
+		queueStatus = xQueueReceive(xInputToPidQueue, &state, 0);
+		if(!initialized && queueStatus == pdTRUE)
+		{
+			initialized = TRUE;
+		}
+		if(initialized)
+		{
+			state.actualRpm = GetMotorRpm();
+			RPM_TYPE driveRpm = PIDAlgorithm(&state);
+			SetMotorRpm(driveRpm);
+			//Forward state onto Display Task
+			xQueueOverwrite(xPidToDisplayQueue, (void*) &state);
+		}
+		vTaskDelay(pdMS_TO_TICKS(10));
+	}
+}
+
+static void DisplayTask(void *params)
+{
+	STATE_PARAMS state;
+	uint16_t leds;
+	BaseType_t queueStatus;
+	bool isInitialized = FALSE;
+	while(TRUE)
+	{
+		queueStatus = xQueueReceive(xPidToDisplayQueue, (void*) &state, pdMS_TO_TICKS(100));
+		if(isInitialized || queueStatus == pdTRUE)
+		{
+			OLEDSetDisplay(GetOLEDDisplayHandle(), &state);
+			leds = FormatLEDOutput(state.select);
+			SetLEDs(leds);
+			isInitialized = TRUE;
+		}
 	}
 }
 

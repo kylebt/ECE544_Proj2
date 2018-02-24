@@ -138,3 +138,12 @@ PmodOLEDrgb* GetOLEDDisplayHandle()
 {
 	return &pmodOLEDrgb_inst;
 }
+
+RPM_TYPE GetMotorRpm()
+{
+	return 0;
+}
+
+void SetMotorRpm(RPM_TYPE rpm)
+{
+}
