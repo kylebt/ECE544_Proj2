@@ -10,7 +10,7 @@
 #define PMODHB3_H
 #include <stdint.h>
 
-int InitAXITimer(void);
+int InitPmodHB3(void);
 
 /* ------------------------------------------------------------ */
 /***	void SetPWM(float dutyCycle)

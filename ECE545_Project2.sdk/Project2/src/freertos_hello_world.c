@@ -289,7 +289,7 @@ static void TestTask(void)
 {
 	//initialize PWM timer
 	//InitAXITimer();
-	InitAXITimer();
+	InitPmodHB3();
 
 
 	while(1)
