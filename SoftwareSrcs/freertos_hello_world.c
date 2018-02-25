@@ -214,6 +214,7 @@ static void PidTask(void *params)
 	bool initialized = FALSE;
 	STATE_PARAMS state;
 	BaseType_t queueStatus;
+	InitPmodHB3();
 	while(TRUE)
 	{
 		//Read
