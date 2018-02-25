@@ -71,6 +71,7 @@ void HallTimeout( TimerHandle_t xTimer )
 		//reset RPM to 0
 		RPM = 0;
 	}
+	xTimerReset(TimeoutTimer,100);
 }
 
 
