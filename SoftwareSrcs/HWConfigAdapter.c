@@ -6,9 +6,11 @@
  */
 
 #include "HWConfigAdapter.h"
+#include "pmodhb3.h"
 #include "xparameters.h"
 #include "pmodENC.h"
 #include "xgpio.h"
+#include "xintc.h"
 
 // Definitions for peripheral PMODOLEDRGB
 #define RGBDSPLY_DEVICE_ID		XPAR_PMODOLEDRGB_0_DEVICE_ID
@@ -34,16 +36,19 @@
 #define GPIO_2_INPUT_0_CHANNEL		1	//Slide Switches
 #define GPIO_2_OUTPUT_0_CHANNEL		2	//LEDs
 
+// Interrupt Controller parameters
+#define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
+
 //Application constants
 #define ROTARY_INC		1		//increment / decrement value per rotary click
 #define ROTARY_NO_NEG	false	//disallow negative enocoder values.
 
 //Application Variables
-PmodOLEDrgb	pmodOLEDrgb_inst;
-PmodENC 	pmodENC_inst;
-XGpio		GPIOInst0;
-XGpio 		GPIOInst1;
-XGpio		GPIOInst2;
+static PmodOLEDrgb	pmodOLEDrgb_inst;
+static PmodENC 	pmodENC_inst;
+static XGpio		GPIOInst0;
+static XGpio 		GPIOInst1;
+XIntc 		IntrptCtlrInst;				// Interrupt Controller instance
 
 int InitHardware(void)
 {
@@ -77,26 +82,33 @@ int InitHardware(void)
 		return XST_FAILURE;
 	}
 
-	// initialize the GPIO instances
-	status = XGpio_Initialize(&GPIOInst2, GPIO_2_DEVICE_ID);
-	if (status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
 
-
+	//Switches are the input port, LEDs are output port
 	// GPIO0 channel 1 is a 16-bit input port.
 	// GPIO0 channel 2 is an 16-bit output port.
 	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL, 0xFFFF);
 	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, 0x0000);
 
+	//Pushbuttons GPIO
 	// GPIO1 channel 1 is an 5-bit input port.
 	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL, 0x001F);
 
-	// GPIO2 channel 1 is an 2-bit input port.
-	// GPIO2 channel 2 is an 1-bit output port.
-	XGpio_SetDataDirection(&GPIOInst2, GPIO_2_INPUT_0_CHANNEL, 0x0003);
-	XGpio_SetDataDirection(&GPIOInst2, GPIO_2_OUTPUT_0_CHANNEL, 0x0000);
+	// initialize the interrupt controller
+	status = XIntc_Initialize(&IntrptCtlrInst, INTC_DEVICE_ID);
+	if (status != XST_SUCCESS)
+	{
+	   return XST_FAILURE;
+	}
+
+	PmodHb3Init();
+
+	// start the interrupt controller such that interrupts are enabled for
+	// all devices that cause interrupts.
+	status = XIntc_Start(&IntrptCtlrInst, XIN_REAL_MODE);
+	if (status != XST_SUCCESS)
+	{
+		return XST_FAILURE;
+	}
 
 	return 0;
 }
@@ -141,9 +153,12 @@ PmodOLEDrgb* GetOLEDDisplayHandle()
 
 RPM_TYPE GetMotorRpm()
 {
-	return 0;
+	return GetRPM();
 }
 
 void SetMotorRpm(RPM_TYPE rpm)
 {
+	float pwm = (rpm > 100) ? 100 : rpm;
+	pwm = pwm/100;
+	SetPWM(pwm);
 }

@@ -127,14 +127,10 @@ static TaskHandle_t xPidTask;
 static TaskHandle_t xDisplayTask;
 static QueueHandle_t xInputToPidQueue = NULL;
 static QueueHandle_t xPidToDisplayQueue = NULL;
-//static TimerHandle_t xTimer = NULL;
-long RxtaskCntr = 0;
 
 
 int main( void )
 {
-	//const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
-
 	xil_printf( "Hello from Freertos example main\r\n" );
 
 	InitHardware();
