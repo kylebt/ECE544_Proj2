@@ -23,6 +23,8 @@
 #include "FreeRTOS.h"
 #include <stdbool.h>
 #include "task.h"
+#include "timers.h"
+#include "semphr.h"
 
 /****************************** Constants **********************************/
 #define AXI_TIMER_BASEADDR XPAR_AXI_TIMER_1_BASEADDR
@@ -34,17 +36,46 @@
 #define HALL_INTERRUPT_ID			XPAR_MICROBLAZE_0_AXI_INTC_AXI_GPIO_2_IP2INTC_IRPT_INTR
 #define HALL_SENSOR_MASK			0x01
 
-#define HALL_SAMPLE_AVERAGE_SIZE	10	//number of samples to average for RPM computation
-
+#define HALL_SAMPLE_AVERAGE_SIZE	50	//number of samples to average for RPM computation
+#define HALL_TIMEOUT				100 //time in milliseconds of no hall readings before RPM is set to 0
 /************************* File Scope Variables ****************************/
 static XGpio GPIOInst2;
-static uint32_t RPM;
+static float RPM;
 extern XIntc IntrptCtlrInst;				// Interrupt Controller instance
+static TimerHandle_t TimeoutTimer;
+static SemaphoreHandle_t HallActive;
 
 /*************************** Private Functions *****************************/
 
+
 /* ------------------------------------------------------------ */
-/***	int InitAXITimer(void)
+/***	void HallTimeout( TimerHandle_t xTimer )
+**
+**	Parameters:
+**		xTimer: timer handle passed in by FreeRTOS kernal
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		resets RPM to 0 when there has been no hall sensor events for the period
+**		specified by HALL_TIMEOUT
+*/
+void HallTimeout( TimerHandle_t xTimer )
+{
+	//if there was no Hall sensor activity
+	if(xSemaphoreTake(HallActive,0) == pdFALSE)
+	{
+		//reset RPM to 0
+		RPM = 0;
+	}
+}
+
+
+/* ------------------------------------------------------------ */
+/***	int InitPmodHB3(void)
 **
 **	Parameters:
 **		none
@@ -55,9 +86,9 @@ extern XIntc IntrptCtlrInst;				// Interrupt Controller instance
 **		
 **
 **	Description:
-**		Initialize the AXI timer for PWM operation to drive HB3 EN signal
+**		Initialize the PmodHB3 for operation to drive the motor and read RPM
 */
-int PmodHb3Init(void)
+int InitPmodHB3(void)
 {
 	u32		ctlsts;		// control/status register or mask
 	uint32_t status;	// status from Xilinx Lib calls
@@ -124,6 +155,13 @@ int PmodHb3Init(void)
 	// enable the hALL interrupt
 	XIntc_Enable(&IntrptCtlrInst, HALL_INTERRUPT_ID);
 
+	//Create timeout timer
+	TimeoutTimer = xTimerCreate("Timeout",HALL_TIMEOUT/portTICK_PERIOD_MS, pdTRUE,0,&HallTimeout );
+
+	xTimerReset(TimeoutTimer,100);
+
+	HallActive = xSemaphoreCreateBinary();
+
 	return 0;
 }
 
@@ -149,9 +187,9 @@ void SetPWM(float dutyCycle)
 	//XTmrCtr_SetControlStatusReg(AXI_TIMER_BASEADDR, 1, ctlsts);
 }
 
-uint32_t GetRPM(void)
+float GetRPM(void)
 {
-	uint32_t RPMVal;
+	float RPMVal;
 	//critical section to prevent interrupt from modifying value while it's read
 	taskENTER_CRITICAL();
 	RPMVal = RPM;
@@ -165,6 +203,7 @@ void Hall_Handler(void)
 	static uint32_t SampleNum = 0;
 	static bool FirstRun = true;
 	uint32_t DeltaT;
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 
 	//only process if a rising edge was detected
 	if(XGpio_DiscreteRead(&GPIOInst2, GPIO_2_INPUT_0_CHANNEL) && HALL_SENSOR_MASK)
@@ -188,11 +227,17 @@ void Hall_Handler(void)
 		DeltaT = (History[SampleNum] - History[(SampleNum + 1) % HALL_SAMPLE_AVERAGE_SIZE])*portTICK_PERIOD_MS;
 
 		//compute the RPM value
-		RPM = (1000*60)/(DeltaT);
+		RPM = (1000*60*HALL_SAMPLE_AVERAGE_SIZE)/((float)DeltaT);
 
 		//update sample pointer
 		SampleNum = (SampleNum + 1) % HALL_SAMPLE_AVERAGE_SIZE;
 	}
+
+	//give semaphore to indicate activity is present
+	xSemaphoreGiveFromISR(HallActive, &xHigherPriorityTaskWoken);
+
+	//yield to other tasks if necesssary
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 
 	//Clear interrupt
 	XGpio_InterruptClear(&GPIOInst2,HALL_SENSOR_MASK);

@@ -234,7 +234,7 @@ void Hall_Handler(void)
 	}
 
 	//give semaphore to indicate activity is present
-	xSemaphoreGiveFromISR(HallActive,xHigherPriorityTaskWoken);
+	xSemaphoreGiveFromISR(HallActive, &xHigherPriorityTaskWoken);
 
 	//yield to other tasks if necesssary
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

@@ -93,6 +93,9 @@
     1 tab == 4 spaces!
 */
 
+/* Project2 includes */
+#include "Project2Helpers.h"
+#include "HWConfigAdapter.h"
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -100,138 +103,74 @@
 #include "timers.h"
 /* Xilinx includes. */
 #include "xil_printf.h"
-#include "xparameters.h"
-#include "PmodOLEDrgb.h"
-#include "pmodENC.h"
-#include "xgpio.h"
 #include <stdio.h>
-#include "pmodhb3.h"
-#include "xintc.h"
+
 
 #define TIMER_ID	1
 #define DELAY_10_SECONDS	10000UL
 #define DELAY_1_SECOND		1000UL
 #define TIMER_CHECK_THRESHOLD	9
 /*-----------------------------------------------------------*/
-// Definitions for peripheral PMODOLEDRGB
-#define RGBDSPLY_DEVICE_ID		XPAR_PMODOLEDRGB_0_DEVICE_ID
-#define RGBDSPLY_GPIO_BASEADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_GPIO_BASEADDR
-#define RGBDSPLY_GPIO_HIGHADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_GPIO_HIGHADD
-#define RGBDSPLY_SPI_BASEADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_SPI_BASEADDR
-#define RGBDSPLY_SPI_HIGHADDR	XPAR_PMODOLEDRGB_0_AXI_LITE_SPI_HIGHADDR
-
-// Definitions for peripheral PMODENC
-#define PMODENC_DEVICE_ID		XPAR_PMODENC_0_DEVICE_ID
-#define PMODENC_BASEADDR		XPAR_PMODENC_0_S00_AXI_BASEADDR
-#define PMODENC_HIGHADDR		XPAR_PMODENC_0_S00_AXI_HIGHADDR
-
-//GPIO
-#define GPIO_0_DEVICE_ID			XPAR_AXI_GPIO_0_DEVICE_ID
-#define GPIO_0_INPUT_0_CHANNEL		2	//Slide Switches
-#define GPIO_0_OUTPUT_0_CHANNEL		1	//LEDs
-
-// Interrupt Controller parameters
-#define INTC_DEVICE_ID			XPAR_INTC_0_DEVICE_ID
-
-//Application constants
-#define ROTARY_INC		1		//increment / decrement value per rotary click
-#define ROTARY_NO_NEG	false	//disallow negative enocoder values.
 
 
 /* The Tx and Rx tasks as described at the top of this file. */
-static void prvTxTask( void *pvParameters );
-static void prvRxTask( void *pvParameters );
-static void TestTask(void);
-static void vTimerCallback( TimerHandle_t pxTimer );
+static void InputTask(void *params );
+static void PidTask(void *param );
+static void DisplayTask(void *params);
+//static void vTimerCallback( TimerHandle_t pxTimer );
 /*-----------------------------------------------------------*/
 
 /* The queue used by the Tx and Rx tasks, as described at the top of this
 file. */
-static TaskHandle_t xTxTask;
-static TaskHandle_t xRxTask;
-static TaskHandle_t xTestTask;
-static QueueHandle_t xQueue = NULL;
-static TimerHandle_t xTimer = NULL;
-char HWstring[15] = "Hello World";
-long RxtaskCntr = 0;
-
-
-/*-----------------------------------------------------------*/
-//Application Variables
-PmodOLEDrgb	pmodOLEDrgb_inst;
-PmodENC 	pmodENC_inst;
-XGpio		GPIOInst0;
-XIntc 		IntrptCtlrInst;				// Interrupt Controller instance
-
+static TaskHandle_t xInputTask;
+static TaskHandle_t xPidTask;
+static TaskHandle_t xDisplayTask;
+static QueueHandle_t xInputToPidQueue = NULL;
+static QueueHandle_t xPidToDisplayQueue = NULL;
 
 
 int main( void )
 {
-	const TickType_t x10seconds = pdMS_TO_TICKS( DELAY_10_SECONDS );
-
 	xil_printf( "Hello from Freertos example main\r\n" );
 
 	InitHardware();
 
-	//test OLEDrgb Display
-	OLEDrgb_Clear(&pmodOLEDrgb_inst);
-	OLEDrgb_SetFontColor(&pmodOLEDrgb_inst,OLEDrgb_BuildRGB(200, 12, 44));
-	OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 0);
-	OLEDrgb_PutString(&pmodOLEDrgb_inst,"Hello World!");
+	// Create the two tasks.  The Tx task is given a lower priority than the
+	// Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
+	// task as soon as the Tx task places an item in the queue.
+	xTaskCreate(InputTask, 					// The function that implements the task.
+					NULL, 						// Unused
+					1000, 					// The stack allocated to the task.
+					NULL, 						// The task parameter is not used, so set to NULL.
+					tskIDLE_PRIORITY,			// The task runs at the idle priority.
+					&xInputTask);
 
-	/* Create the two tasks.  The Tx task is given a lower priority than the
-	Rx task, so the Rx task will leave the Blocked state and pre-empt the Tx
-	task as soon as the Tx task places an item in the queue. */
-	xTaskCreate( 	prvTxTask, 					/* The function that implements the task. */
-					( const char * ) "Tx", 		/* Text name for the task, provided to assist debugging only. */
-					configMINIMAL_STACK_SIZE, 	/* The stack allocated to the task. */
-					NULL, 						/* The task parameter is not used, so set to NULL. */
-					tskIDLE_PRIORITY,			/* The task runs at the idle priority. */
-					&xTxTask );
-
-	xTaskCreate( prvRxTask,
-				 ( const char * ) "GB",
-				 configMINIMAL_STACK_SIZE,
+	xTaskCreate(PidTask,
+				 NULL,
+				 1000,
 				 NULL,
 				 tskIDLE_PRIORITY + 1,
-				 &xRxTask );
+				 &xPidTask);
 
-	xTaskCreate( TestTask,
-				 ( const char * ) "Test",
-				 2000,
+	xTaskCreate(DisplayTask,
 				 NULL,
-				 tskIDLE_PRIORITY + 1,
-				 &xTestTask );
+				 1000,
+				 NULL,
+				 tskIDLE_PRIORITY,
+				 &xDisplayTask);
 
 
-	/* Create the queue used by the tasks.  The Rx task has a higher priority
-	than the Tx task, so will preempt the Tx task and remove values from the
-	queue as soon as the Tx task writes to the queue - therefore the queue can
+	/* Create the queues used by the tasks.  The Display task has a higher priority
+	than the PID task which is higher than the input task, so will each preempt the
+	appropriate task before it has a chance to write twice - therefore the queue can
 	never have more than one item in it. */
-	xQueue = xQueueCreate( 	1,						/* There is only one space in the queue. */
-							sizeof( HWstring ) );	/* Each space in the queue is large enough to hold a uint32_t. */
+	xInputToPidQueue = xQueueCreate(1, sizeof(STATE_PARAMS));	/* Each space in the queue is large enough to hold a STATE_PARAMS structure. */
 
-	/* Check the queue was created. */
-	configASSERT( xQueue );
+	configASSERT(xInputToPidQueue);
 
-	/* Create a timer with a timer expiry of 10 seconds. The timer would expire
-	 after 10 seconds and the timer call back would get called. In the timer call back
-	 checks are done to ensure that the tasks have been running properly till then.
-	 The tasks are deleted in the timer call back and a message is printed to convey that
-	 the example has run successfully.
-	 The timer expiry is set to 10 seconds and the timer set to not auto reload. */
-	xTimer = xTimerCreate( (const char *) "Timer",
-							x10seconds,
-							pdFALSE,
-							(void *) TIMER_ID,
-							vTimerCallback);
-	/* Check the timer was created. */
-	configASSERT( xTimer );
+	xPidToDisplayQueue = xQueueCreate(1, sizeof(STATE_PARAMS));	/* Each space in the queue is large enough to hold a STATE_PARAMS structure. */
 
-	/* start the timer with a block time of 0 ticks. This means as soon
-	   as the schedule starts the timer will start running and will expire after
-	   10 seconds */
-	xTimerStart( xTimer, 0 );
+	configASSERT(xPidToDisplayQueue);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -244,175 +183,76 @@ int main( void )
 	for( ;; );
 }
 
-
-/*-----------------------------------------------------------*/
-static void prvTxTask( void *pvParameters )
+static void InputTask(void *params )
 {
-const TickType_t x1second = pdMS_TO_TICKS( DELAY_1_SECOND );
+	int16_t rotaryCount;
+	uint16_t slideSwitches;
+	BUTTON_STATE buttons;
 
-	for( ;; )
+	STATE_PARAMS state;
+
+	bool clearRotaryCountAfterRead = TRUE;
+	bool forceStateReset = TRUE; //Flag to initialize state
+
+	BaseType_t queueStatus;
+
+	while(TRUE)
 	{
-		/* Delay for 1 second. */
-		vTaskDelay( x1second );
-
-		/* Send the next value on the queue.  The queue should always be
-		empty at this point so a block time of 0 is used. */
-		xQueueSend( xQueue,			/* The queue being written to. */
-					HWstring, /* The address of the data being sent. */
-					0UL );			/* The block time. */
+		rotaryCount = GetRotaryCount(clearRotaryCountAfterRead);
+		slideSwitches = GetSwitches();
+		buttons = GetPushButtons();
+		ModifyState(slideSwitches, buttons, rotaryCount, &state, forceStateReset);
+		forceStateReset = FALSE;
+		queueStatus = xQueueOverwrite(xInputToPidQueue, &state);
+		configASSERT(queueStatus == pdTRUE);
+		vTaskDelay(pdMS_TO_TICKS(150));
 	}
 }
 
-/*-----------------------------------------------------------*/
-static void prvRxTask( void *pvParameters )
+static void PidTask(void *params)
 {
-char Recdstring[15] = "";
-
-	for( ;; )
+	bool initialized = FALSE;
+	STATE_PARAMS state;
+	BaseType_t queueStatus;
+	while(TRUE)
 	{
-		
-
-		/* Block to wait for data arriving on the queue. */
-		xQueueReceive( 	xQueue,				/* The queue being read. */
-						Recdstring,	/* Data is read into this address. */
-						portMAX_DELAY );	/* Wait without a timeout for data. */
-
-		/* Print the received data. */
-		xil_printf( "Rx task received string from Tx task: %s\r\n", Recdstring );
-
-		RxtaskCntr++;
+		//Read
+		queueStatus = xQueueReceive(xInputToPidQueue, &state, 0);
+		if(!initialized && queueStatus == pdTRUE)
+		{
+			initialized = TRUE;
+		}
+		if(initialized)
+		{
+			state.actualRpm = GetMotorRpm();
+			RPM_TYPE driveRpm = PIDAlgorithm(&state);
+			SetMotorRpm(driveRpm);
+			//Forward state onto Display Task
+			xQueueOverwrite(xPidToDisplayQueue, (void*) &state);
+		}
+		vTaskDelay(pdMS_TO_TICKS(10));
 	}
 }
 
-//This task will test various hardware functions
-static void TestTask(void)
+static void DisplayTask(void *params)
 {
-	//initialize PWM timer
-	//InitAXITimer();
-	InitPmodHB3();
-
-
-	while(1)
+	STATE_PARAMS state;
+	uint16_t leds;
+	BaseType_t queueStatus;
+	bool isInitialized = FALSE;
+	while(TRUE)
 	{
-		uint16_t RotaryCnt;
-		uint32_t SlideSwitches;
-		float RPM;
-		static int PWMDuty = 0;
-
-		char str[32];
-		//Read encoder
-		pmodENC_read_count(&pmodENC_inst, &RotaryCnt);
-
-		//Display encoder value on OLED display
-		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 1);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,"ENC: ");
-
-		sprintf(&str[0],"%*d",6,RotaryCnt);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
-
-		//Read RPM
-		RPM = GetRPM();
-
-		//Display Hall sensor value
-		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 2);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,"RPM: ");
-
-		sprintf(&str[0],"%*f",4,RPM);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
-
-		//Read Slide Switch GPIO value
-		SlideSwitches = XGpio_DiscreteRead(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL);
-
-		//Copy switch pattern to LEDs
-		XGpio_DiscreteWrite(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, SlideSwitches);
-
-		vTaskDelay(pdMS_TO_TICKS( 100 ));
-
-		PWMDuty = (PWMDuty+1)%100;
-		SetPWM(((float)(PWMDuty++))/100);
-
-		//Display pwm value
-		OLEDrgb_SetCursor(&pmodOLEDrgb_inst, 0, 3);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,"PWM: ");
-
-		sprintf(&str[0],"%*d",3,PWMDuty);
-		OLEDrgb_PutString(&pmodOLEDrgb_inst,&str[0]);
+		queueStatus = xQueueReceive(xPidToDisplayQueue, (void*) &state, pdMS_TO_TICKS(100));
+		if(isInitialized || queueStatus == pdTRUE)
+		{
+			OLEDSetDisplay(GetOLEDDisplayHandle(), &state);
+			leds = FormatLEDOutput(state.select);
+			SetLEDs(leds);
+			isInitialized = TRUE;
+		}
 	}
 }
 
-/*-----------------------------------------------------------*/
-static void vTimerCallback( TimerHandle_t pxTimer )
-{
-	long lTimerId;
-	configASSERT( pxTimer );
-
-	lTimerId = ( long ) pvTimerGetTimerID( pxTimer );
-
-	if (lTimerId != TIMER_ID) {
-		xil_printf("FreeRTOS Hello World Example FAILED");
-	}
-
-	/* If the RxtaskCntr is updated every time the Rx task is called. The
-	 Rx task is called every time the Tx task sends a message. The Tx task
-	 sends a message every 1 second.
-	 The timer expires after 10 seconds. We expect the RxtaskCntr to at least
-	 have a value of 9 (TIMER_CHECK_THRESHOLD) when the timer expires. */
-	if (RxtaskCntr >= TIMER_CHECK_THRESHOLD) {
-		xil_printf("FreeRTOS Hello World Example PASSED");
-	} else {
-		xil_printf("FreeRTOS Hello World Example FAILED");
-	}
-
-	vTaskDelete( xRxTask );
-	vTaskDelete( xTxTask );
-}
 
 
-int InitHardware(void)
-{
-	uint32_t status;				// status from Xilinx Lib calls
-
-	OLEDrgb_begin(&pmodOLEDrgb_inst, RGBDSPLY_GPIO_BASEADDR, RGBDSPLY_SPI_BASEADDR);
-
-	// initialize the pmodENC and hardware
-	status = pmodENC_initialize(&pmodENC_inst, PMODENC_BASEADDR);
-	if (status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-	//initialize rotary encoder
-	pmodENC_init(&pmodENC_inst, ROTARY_INC, ROTARY_NO_NEG);
-	pmodENC_clear_count(&pmodENC_inst);
-
-
-	// initialize the GPIO instances
-	status = XGpio_Initialize(&GPIOInst0, GPIO_0_DEVICE_ID);
-	if (status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-	// GPIO0 channel 1 is a 16-bit input port.
-	// GPIO0 channel 2 is an 16-bit output port.
-	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_INPUT_0_CHANNEL, 0xFFFF);
-	XGpio_SetDataDirection(&GPIOInst0, GPIO_0_OUTPUT_0_CHANNEL, 0x0000);
-
-	// initialize the interrupt controller
-	status = XIntc_Initialize(&IntrptCtlrInst, INTC_DEVICE_ID);
-	if (status != XST_SUCCESS)
-	{
-	   return XST_FAILURE;
-	}
-
-	// start the interrupt controller such that interrupts are enabled for
-	// all devices that cause interrupts.
-	status = XIntc_Start(&IntrptCtlrInst, XIN_REAL_MODE);
-	if (status != XST_SUCCESS)
-	{
-		return XST_FAILURE;
-	}
-
-	return 0;
-}
 

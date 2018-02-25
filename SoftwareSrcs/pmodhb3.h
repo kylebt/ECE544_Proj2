@@ -10,7 +10,7 @@
 #define PMODHB3_H
 #include <stdint.h>
 
-int PmodHb3Init(void);
+int InitPmodHB3(void);
 
 /* ------------------------------------------------------------ */
 /***	void SetPWM(float dutyCycle)
@@ -29,7 +29,7 @@ int PmodHb3Init(void);
 void SetPWM(float dutyCycle);
 
 /* ------------------------------------------------------------ */
-/***	uint32_t GetRPM(void)
+/***	float GetRPM(void)
 **
 **	Parameters:
 **		none
@@ -43,7 +43,7 @@ void SetPWM(float dutyCycle);
 **		Reads the computed RPM value based on the frequency of 
 ** 		Hall Sensor updates
 */
-uint32_t GetRPM(void);
+float GetRPM(void);
 
 /* ------------------------------------------------------------ */
 /***	void Hall_Handler(void)
