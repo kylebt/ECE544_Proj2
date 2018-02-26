@@ -75,6 +75,7 @@ void ModifyState(uint16_t switches, BUTTON_STATE buttons, int16_t encoderCount, 
 	if(params->direction != oldDirection)
 	{
 		params->expectedRpm = 0;
+		ClearPidState();
 	}
 
 	int16_t pidConstantModifier = 0;
@@ -85,6 +86,7 @@ void ModifyState(uint16_t switches, BUTTON_STATE buttons, int16_t encoderCount, 
 		params->ki = DefaultKi;
 		params->kd = DefaultKd;
 		params->expectedRpm = 0;
+		ClearPidState();
 		return;
 	}
 	else if(buttons.upButton && !buttons.downButton)

@@ -236,7 +236,7 @@ static void PidTask(void *params)
 		{
 			if(oldDirection != state.direction || state.isShuttingDown)
 			{
-				SetMotorRpm(state.expectedRpm); //Expected RPM is set to 0 when direction changes by InputTask
+				SetMotorRpm(0);
 				//Let this task iteration complete, and update direction on the next reentry into the function.
 				state.actualRpm = 0; //Fake this because it's not being read at this moment in time
 			}
