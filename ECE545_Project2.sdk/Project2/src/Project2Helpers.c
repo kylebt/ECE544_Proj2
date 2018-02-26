@@ -254,8 +254,8 @@ uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection)
 
 #define USE_PID_ALGORITHM
 
-#define INTEGRAL_MAX 2000
-#define INTEGRAL_MIN -2000
+#define INTEGRAL_MAX 100000
+#define INTEGRAL_MIN -100000
 
 RPM_TYPE OldRpm = 0;
 float IntegralState = 0.0;
@@ -271,20 +271,21 @@ RPM_TYPE PIDAlgorithm(STATE_PARAMS* params)
 	float error = params->expectedRpm - params->actualRpm;
 
 	//Proportional term
-	//float propTerm = error * params->kp;
+
 
 	//Integral term
 	IntegralState += error;
 	if(IntegralState > INTEGRAL_MAX) IntegralState = INTEGRAL_MAX;
 	else if(IntegralState < INTEGRAL_MIN) IntegralState = INTEGRAL_MIN;
 
-	//float intTerm = IntegralState * params->ki;
+	float propTerm = error * (float)params->kp/10;
+	float intTerm = IntegralState * (float)params->ki/100;
 
 	//Derivative term
 	//float dirTerm = (params->actualRpm - OldRpm) * params->kd;
 
 	OldRpm = params->actualRpm;
-	return (error * params->kp) + (IntegralState * params->ki) + (IntegralState * params->ki);
+	return propTerm + intTerm;// + (IntegralState * params->ki);
 #else
 	return params->expectedRpm;
 #endif

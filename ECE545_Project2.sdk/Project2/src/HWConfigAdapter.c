@@ -166,7 +166,7 @@ PmodOLEDrgb* GetOLEDDisplayHandle()
 	return &pmodOLEDrgb_inst;
 }
 
-#define AVERAGE_RPM_READING
+//#define AVERAGE_RPM_READING
 RPM_TYPE GetMotorRpm()
 {
 #ifdef AVERAGE_RPM_READING
@@ -209,7 +209,8 @@ RPM_TYPE GetMotorRpm()
 
 void SetMotorRpm(RPM_TYPE rpm)
 {
-	float pwm = ConvertRpmToPwm(rpm);
+	//float pwm = ConvertRpmToPwm(rpm);
+	float pwm = (float)rpm/10000;
 	SetPWM(pwm);
 }
 

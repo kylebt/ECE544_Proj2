@@ -36,7 +36,7 @@
 #define HALL_INTERRUPT_ID			XPAR_MICROBLAZE_0_AXI_INTC_AXI_GPIO_2_IP2INTC_IRPT_INTR
 #define HALL_SENSOR_MASK			0x01
 
-#define HALL_SAMPLE_AVERAGE_SIZE	50	//number of samples to average for RPM computation
+#define HALL_SAMPLE_AVERAGE_SIZE	10	//number of samples to average for RPM computation
 #define HALL_TIMEOUT				100 //time in milliseconds of no hall readings before RPM is set to 0
 /************************* File Scope Variables ****************************/
 static XGpio GPIOInst2;
