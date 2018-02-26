@@ -104,6 +104,7 @@
 /* Xilinx includes. */
 #include "xil_printf.h"
 #include <stdio.h>
+#include "watchdog.h"
 
 
 #define TIMER_ID	1
@@ -205,6 +206,10 @@ static void InputTask(void *params )
 		forceStateReset = FALSE;
 		queueStatus = xQueueOverwrite(xInputToPidQueue, &state);
 		configASSERT(queueStatus == pdTRUE);
+		if((slideSwitches & 0x8000) == 0)
+		{
+			WatchDogKick();
+		}
 		vTaskDelay(pdMS_TO_TICKS(150));
 	}
 }
@@ -248,6 +253,10 @@ static void DisplayTask(void *params)
 		{
 			OLEDSetDisplay(GetOLEDDisplayHandle(), &state);
 			leds = FormatLEDOutput(state.select);
+			if(WatchDogExpired())
+			{
+				leds = leds | 0x8000;
+			}
 			SetLEDs(leds);
 			isInitialized = TRUE;
 		}

@@ -11,6 +11,7 @@
 #include "pmodENC.h"
 #include "xgpio.h"
 #include "xintc.h"
+#include "watchdog.h"
 
 // Definitions for peripheral PMODOLEDRGB
 #define RGBDSPLY_DEVICE_ID		XPAR_PMODOLEDRGB_0_DEVICE_ID
@@ -102,6 +103,13 @@ int InitHardware(void)
 
 	InitPmodHB3();
 
+	//initialize watchdog timer
+	status = InitWatchDog();
+	if (status != XST_SUCCESS)
+	{
+		return XST_FAILURE;
+	}
+
 	// start the interrupt controller such that interrupts are enabled for
 	// all devices that cause interrupts.
 	status = XIntc_Start(&IntrptCtlrInst, XIN_REAL_MODE);
@@ -109,6 +117,9 @@ int InitHardware(void)
 	{
 		return XST_FAILURE;
 	}
+
+	//start watchdog timer
+	StartWatchDog();
 
 	return 0;
 }
