@@ -23,4 +23,7 @@ PmodOLEDrgb* GetOLEDDisplayHandle();
 RPM_TYPE GetMotorRpm();
 void SetMotorRpm(RPM_TYPE rpm);
 
+//Returns a float between 0.0 and 1.0 that represents duty cycle
+float ConvertRpmToPwm(RPM_TYPE rpm);
+
 #endif /* SRC_HWCONFIGADAPTER_H_ */

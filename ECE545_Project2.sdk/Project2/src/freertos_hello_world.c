@@ -96,6 +96,7 @@
 /* Project2 includes */
 #include "Project2Helpers.h"
 #include "HWConfigAdapter.h"
+#include "pmodhb3.h"
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
@@ -219,7 +220,9 @@ static void PidTask(void *params)
 	bool initialized = FALSE;
 	STATE_PARAMS state;
 	BaseType_t queueStatus;
+
 	InitPmodHB3();
+
 	while(TRUE)
 	{
 		//Read

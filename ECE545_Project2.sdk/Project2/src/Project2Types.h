@@ -24,7 +24,7 @@ typedef enum
 	REVERSE
 } DIRECTION;
 
-typedef int32_t RPM_TYPE;
+typedef int32_t RPM_TYPE; //Important that this is a signed type, multiple sections of code depend on it!
 typedef uint16_t PID_K_TYPE;
 
 typedef struct

@@ -3,6 +3,11 @@
  *
  *  Created on: Feb 21, 2018
  *      Author: Kyle
+ *
+ *  Description: Functions that implement hardware specific functionality.
+ *  The intent is that any changes in hardware or embedded system only
+ *  cause changes in this file, and this file could differ if two
+ *  people's hardware sets have different performance.
  */
 
 #include "HWConfigAdapter.h"
@@ -12,6 +17,7 @@
 #include "xgpio.h"
 #include "xintc.h"
 #include "watchdog.h"
+#include "math.h"
 
 // Definitions for peripheral PMODOLEDRGB
 #define RGBDSPLY_DEVICE_ID		XPAR_PMODOLEDRGB_0_DEVICE_ID
@@ -101,8 +107,6 @@ int InitHardware(void)
 	   return XST_FAILURE;
 	}
 
-	InitPmodHB3();
-
 	//initialize watchdog timer
 	status = InitWatchDog();
 	if (status != XST_SUCCESS)
@@ -164,12 +168,66 @@ PmodOLEDrgb* GetOLEDDisplayHandle()
 
 RPM_TYPE GetMotorRpm()
 {
-	return GetRPM();
+	//Averaging out measurements because sometimes RPM returns falsely as 0
+	//TODO: Simplify this once the 0 RPM bug is fixed.
+	const int SamplesToAverage = 5;
+	static int sampleIndex = 0;
+	static bool initialized = FALSE;
+	static float measurements[5];
+	float newMeasurement = GetRPM();
+	sampleIndex = sampleIndex % SamplesToAverage;
+	if(!initialized)
+	{
+		if(sampleIndex == SamplesToAverage - 1) initialized = TRUE;
+		measurements[sampleIndex++] = newMeasurement;
+		return newMeasurement;
+	}
+	else if(initialized)
+	{
+		float average = 0.0;
+		for(int i = 0; i < SamplesToAverage; ++i)
+		{
+			average += measurements[i];
+		}
+		measurements[sampleIndex++] = newMeasurement;
+		return average / SamplesToAverage;
+
+		//if(fabsf(newMeasurement - average) < 2000)
+		//{
+		//	measurements[sampleIndex++] = newMeasurement;
+		//}
+
+		//return average;
+	}
+	return newMeasurement;
 }
 
 void SetMotorRpm(RPM_TYPE rpm)
 {
-	float pwm = (rpm > 100) ? 100 : rpm;
-	pwm = pwm/100;
+	float pwm = ConvertRpmToPwm(rpm);
 	SetPWM(pwm);
+}
+
+float ConvertRpmToPwm(RPM_TYPE rpm)
+{
+	float pwm = 0.0;
+
+	//Formulae obtained via experimentation with Kyle's unloaded motor
+	if(rpm <= 0)
+	{
+		pwm = 0.0;
+	}
+	else if(rpm <= 6750)
+	{
+		pwm = (((float) rpm) * 0.004 + 18.83) / 100;
+	}
+	else if(rpm <= 11500)
+	{
+		pwm = (((float) rpm) * 0.0075 - 5.154) / 100;
+	}
+	else
+	{
+		pwm = 82.0; //Max for protection
+	}
+	return pwm;
 }

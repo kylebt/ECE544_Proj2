@@ -254,9 +254,32 @@ uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection)
 
 /**
  * @brief Takes the actual rpm, expected rpm, and PID constants, and determines the RPM set point based on the PID algorithm.
+ *
+ * Used "PID Without a PhD" as a reference guide.
  */
 RPM_TYPE PIDAlgorithm(STATE_PARAMS* params)
 {
-	return params->expectedRpm;
+	static const float IntegralMax = 2000;
+	static const float IntegralMin = -2000;
+	static RPM_TYPE oldRpm = 0;
+	static float integralState = 0.0;
+
+	float error = params->expectedRpm - params->actualRpm;
+
+	//Proportional term
+	float propTerm = error * params->kp;
+
+	//Integral term
+	integralState += error;
+	if(integralState > IntegralMax) integralState = IntegralMax;
+	else if(integralState < IntegralMin) integralState = IntegralMin;
+
+	float intTerm = integralState * params->ki;
+
+	//Derivative term
+	float dirTerm = (params->actualRpm - oldRpm) * params->kd;
+
+	oldRpm = params->actualRpm;
+	return propTerm + intTerm + dirTerm;
 }
 
