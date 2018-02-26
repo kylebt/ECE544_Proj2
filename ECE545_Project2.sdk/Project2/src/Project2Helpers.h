@@ -32,7 +32,7 @@ void ModifyState(uint16_t switches, BUTTON_STATE buttons, int16_t encoderCount, 
 void OLEDSetDisplay(PmodOLEDrgb* oled, STATE_PARAMS* newState);
 
 /**
- *
+ * Translate the selected PID constant into an encoding to put on the LEDs.
  */
 uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection);
 
@@ -40,5 +40,10 @@ uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection);
  * @brief Takes the actual rpm, expected rpm, and PID constants, and determines the RPM set point based on the PID algorithm.
  */
 RPM_TYPE PIDAlgorithm(STATE_PARAMS* params);
+
+/**
+ * Clears any state being held by the PID algorithm.
+ */
+void ClearPidState();
 
 #endif /* SRC_PROJECT2HELPERS_H_ */

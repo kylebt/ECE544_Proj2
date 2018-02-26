@@ -39,6 +39,7 @@ typedef struct
 	PID_K_TYPE kd;
 	uint8_t kIncrement;
 	PID_K_SELECT select;
+	bool isShuttingDown;
 } STATE_PARAMS;
 
 typedef struct

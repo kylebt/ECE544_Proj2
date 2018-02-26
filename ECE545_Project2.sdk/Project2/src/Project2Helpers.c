@@ -68,6 +68,15 @@ void ModifyState(uint16_t switches, BUTTON_STATE buttons, int16_t encoderCount, 
 	params->kIncrement = GetPidConstantIncrement(switches);
 	params->select = GetPidConstantSelect(switches);
 
+	params->isShuttingDown = (switches & 1 << 15) != 0;
+	DIRECTION oldDirection = params->direction;
+	params->direction = (switches & 1 << 14) ? FORWARD : REVERSE;
+
+	if(params->direction != oldDirection)
+	{
+		params->expectedRpm = 0;
+	}
+
 	int16_t pidConstantModifier = 0;
 
 	if(buttons.centerButton || forceReset)
@@ -114,11 +123,16 @@ STATE_PARAMS OldState;
 bool IsDisplayInitialized = FALSE;
 uint16_t WHITE;
 uint16_t YELLOW;
+uint16_t RED;
+uint16_t CYAN;
 
 const uint32_t DISPLAY_CHAR_WIDTH = 12;
 
 const int RpmHeaderRow = 0;
-const char* RpmHeader = "MOTOR SPEED";
+const char* RpmHeader = "MOT RPM- %s";
+const char* Forward = "FWD";
+const char* Reverse = "REV";
+const char* ShutdownMessage = "POWER DOWN!!";
 
 const int ExpectedRpmRow = 1;
 const char* ExpectedRpmHeader = "SET: %7d";
@@ -141,15 +155,13 @@ const char* KdHeader = "Kd: %8d";
 void InitializeDisplay(PmodOLEDrgb* oled)
 {
 	WHITE = OLEDrgb_BuildRGB(0xFF, 0xFF, 0xFF);
-	YELLOW = OLEDrgb_BuildRGB(0xFF, 0xFF, 0x00); //Initialize for later use
-
+	YELLOW = OLEDrgb_BuildRGB(0x00, 0xFF, 0xFF); //Initialize for later use
+	RED = OLEDrgb_BuildRGB(0x00, 0xFF, 0x00);
+	CYAN = OLEDrgb_BuildRGB(0xFF, 0x00, 0xFF);
 	//Only write lines which will not change
 
 	OLEDrgb_Clear(oled);
-	OLEDrgb_SetFontColor(oled, WHITE);
-
-	OLEDrgb_SetCursor(oled, 0, RpmHeaderRow);
-	OLEDrgb_PutString(oled, (char*) RpmHeader);
+	OLEDrgb_SetFontColor(oled, CYAN);
 
 	OLEDrgb_SetCursor(oled, 0, PidValueRow);
 	OLEDrgb_PutString(oled, (char*) PidValueHeader);
@@ -183,6 +195,22 @@ void OLEDSetDisplay(PmodOLEDrgb* oled, STATE_PARAMS* newState)
 	}
 
 	char temp[DISPLAY_CHAR_WIDTH + 1]; //For converting numeric values to strings
+
+	if(OldState.direction != newState->direction || OldState.isShuttingDown != newState->isShuttingDown || forceWriteAll)
+	{
+		OLEDrgb_SetCursor(oled, 0, RpmHeaderRow);
+		if(newState->isShuttingDown)
+		{
+			OLEDrgb_SetFontColor(oled, RED);
+			OLEDrgb_PutString(oled, (char *) ShutdownMessage);
+		}
+		else
+		{
+			OLEDrgb_SetFontColor(oled, CYAN);
+			sprintf(temp, RpmHeader, newState->direction == FORWARD ? Forward : Reverse);
+			OLEDrgb_PutString(oled, temp);
+		}
+	}
 
 	OLEDrgb_SetFontColor(oled, WHITE);
 
@@ -289,5 +317,11 @@ RPM_TYPE PIDAlgorithm(STATE_PARAMS* params)
 #else
 	return params->expectedRpm;
 #endif
+}
+
+void ClearPidState()
+{
+	IntegralState = 0.0;
+	OldRpm = 0;
 }
 

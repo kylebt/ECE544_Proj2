@@ -220,6 +220,7 @@ static void PidTask(void *params)
 	bool initialized = FALSE;
 	STATE_PARAMS state;
 	BaseType_t queueStatus;
+	DIRECTION oldDirection;
 
 	InitPmodHB3();
 
@@ -233,9 +234,20 @@ static void PidTask(void *params)
 		}
 		if(initialized)
 		{
-			state.actualRpm = GetMotorRpm();
-			RPM_TYPE driveRpm = PIDAlgorithm(&state);
-			SetMotorRpm(driveRpm);
+			if(oldDirection != state.direction || state.isShuttingDown)
+			{
+				SetMotorRpm(state.expectedRpm); //Expected RPM is set to 0 when direction changes by InputTask
+				//Let this task iteration complete, and update direction on the next reentry into the function.
+				state.actualRpm = 0; //Fake this because it's not being read at this moment in time
+			}
+			else
+			{
+				SetDirection((bool) state.direction);
+				state.actualRpm = GetMotorRpm();
+				RPM_TYPE driveRpm = PIDAlgorithm(&state);
+				SetMotorRpm(driveRpm);
+			}
+			oldDirection = state.direction;
 			//Forward state onto Display Task
 			xQueueOverwrite(xPidToDisplayQueue, (void*) &state);
 		}
@@ -258,7 +270,11 @@ static void DisplayTask(void *params)
 			leds = FormatLEDOutput(state.select);
 			if(WatchDogExpired())
 			{
-				leds = leds | 0x8000;
+				leds = leds | 1 << 15;
+			}
+			if(state.direction == FORWARD)
+			{
+				leds = leds | 1 << 14;
 			}
 			SetLEDs(leds);
 			isInitialized = TRUE;
