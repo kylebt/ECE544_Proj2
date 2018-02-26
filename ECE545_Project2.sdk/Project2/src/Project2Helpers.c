@@ -282,7 +282,7 @@ RPM_TYPE PIDAlgorithm(STATE_PARAMS* params)
 	float intTerm = IntegralState;
 
 	//Derivative term
-	float dirTerm = (params->actualRpm - OldRpm) * (float)params->kd/1000;
+	float dirTerm = (params->actualRpm - OldRpm) * (float)params->kd/10;
 
 	OldRpm = params->actualRpm;
 	return propTerm + intTerm - dirTerm;// + (IntegralState * params->ki);
