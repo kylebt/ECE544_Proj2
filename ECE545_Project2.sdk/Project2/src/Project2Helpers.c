@@ -252,6 +252,14 @@ uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection)
 // HELPER FUNCTIONS FOR PID ALGORITHM
 //****************************************************************
 
+#define USE_PID_ALGORITHM
+
+#define INTEGRAL_MAX 2000
+#define INTEGRAL_MIN -2000
+
+RPM_TYPE OldRpm = 0;
+float IntegralState = 0.0;
+
 /**
  * @brief Takes the actual rpm, expected rpm, and PID constants, and determines the RPM set point based on the PID algorithm.
  *
@@ -259,27 +267,26 @@ uint16_t FormatLEDOutput(PID_K_SELECT pidConstantSelection)
  */
 RPM_TYPE PIDAlgorithm(STATE_PARAMS* params)
 {
-	static const float IntegralMax = 2000;
-	static const float IntegralMin = -2000;
-	static RPM_TYPE oldRpm = 0;
-	static float integralState = 0.0;
-
+#ifdef USE_PID_ALGORITHM
 	float error = params->expectedRpm - params->actualRpm;
 
 	//Proportional term
-	float propTerm = error * params->kp;
+	//float propTerm = error * params->kp;
 
 	//Integral term
-	integralState += error;
-	if(integralState > IntegralMax) integralState = IntegralMax;
-	else if(integralState < IntegralMin) integralState = IntegralMin;
+	IntegralState += error;
+	if(IntegralState > INTEGRAL_MAX) IntegralState = INTEGRAL_MAX;
+	else if(IntegralState < INTEGRAL_MIN) IntegralState = INTEGRAL_MIN;
 
-	float intTerm = integralState * params->ki;
+	//float intTerm = IntegralState * params->ki;
 
 	//Derivative term
-	float dirTerm = (params->actualRpm - oldRpm) * params->kd;
+	//float dirTerm = (params->actualRpm - OldRpm) * params->kd;
 
-	oldRpm = params->actualRpm;
-	return propTerm + intTerm + dirTerm;
+	OldRpm = params->actualRpm;
+	return (error * params->kp) + (IntegralState * params->ki) + (IntegralState * params->ki);
+#else
+	return params->expectedRpm;
+#endif
 }
 

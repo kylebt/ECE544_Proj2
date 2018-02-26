@@ -166,8 +166,10 @@ PmodOLEDrgb* GetOLEDDisplayHandle()
 	return &pmodOLEDrgb_inst;
 }
 
+#define AVERAGE_RPM_READING
 RPM_TYPE GetMotorRpm()
 {
+#ifdef AVERAGE_RPM_READING
 	//Averaging out measurements because sometimes RPM returns falsely as 0
 	//TODO: Simplify this once the 0 RPM bug is fixed.
 	const int SamplesToAverage = 5;
@@ -200,6 +202,9 @@ RPM_TYPE GetMotorRpm()
 		//return average;
 	}
 	return newMeasurement;
+#else
+	return GetRPM();
+#endif
 }
 
 void SetMotorRpm(RPM_TYPE rpm)
