@@ -9,6 +9,7 @@
 #ifndef PMODHB3_H
 #define PMODHB3_H
 #include <stdint.h>
+#include <stdbool.h>
 
 int InitPmodHB3(void);
 
@@ -44,6 +45,22 @@ void SetPWM(float dutyCycle);
 ** 		Hall Sensor updates
 */
 float GetRPM(void);
+
+/* ------------------------------------------------------------ */
+/***	void SetDirection(bool Direction)
+**
+**	Parameters:
+**		Direction: determines which direction the motor is to rotate
+**	Return Value:
+**		none
+**
+**	Errors:
+**		none
+**
+**	Description:
+**		sets the direction of the motor
+*/
+void SetDirection(bool Direction);
 
 /* ------------------------------------------------------------ */
 /***	void Hall_Handler(void)

@@ -188,6 +188,30 @@ void SetPWM(float dutyCycle)
 	//XTmrCtr_SetControlStatusReg(AXI_TIMER_BASEADDR, 1, ctlsts);
 }
 
+void SetDirection(bool Direction)
+{
+	uint32_t tempPWMVal;
+
+	//save current PWM value
+	tempPWMVal = XTmrCtr_GetLoadReg(AXI_TIMER_BASEADDR, 1);
+
+	//set PWM module to off
+	XTmrCtr_SetLoadReg(AXI_TIMER_BASEADDR, 1,0);
+
+	//set direction
+	if(Direction)
+	{
+		XGpio_DiscreteWrite(&GPIOInst2, GPIO_2_OUTPUT_0_CHANNEL, 0x01);
+	}
+	else
+	{
+		XGpio_DiscreteWrite(&GPIOInst2, GPIO_2_OUTPUT_0_CHANNEL, 0x00);
+	}
+
+	//restore PWM value
+	XTmrCtr_SetLoadReg(AXI_TIMER_BASEADDR, 1,tempPWMVal);
+}
+
 float GetRPM(void)
 {
 	float RPMVal;
